@@ -1,6 +1,7 @@
 name: Extract direct image files
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
 
@@ -9,7 +10,7 @@ permissions:
 
 jobs:
   extract:
-    if: "!contains(github.event.head_commit.message, '[image-extract]')"
+    if: "!contains(github.event.head_commit.message || '', '[image-extract]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
