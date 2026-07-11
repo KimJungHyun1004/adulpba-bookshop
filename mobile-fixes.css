@@ -1,19 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap');
 h1,h2,h3,.choice strong{word-break:keep-all;overflow-wrap:break-word}
-.header-logo-crop{display:block;width:250px;height:66px;overflow:hidden;flex:0 0 auto}
-.official-header-logo{display:block;width:250px;height:auto;transform:translateY(-2px)}
-.brand{min-width:0;display:flex;align-items:center;gap:10px}
-.header-brand-tag{font-size:.82rem;font-weight:800;color:#5f7687;white-space:nowrap;letter-spacing:-.03em}
-.brand-divider{color:#b9a98d;margin-right:7px;font-weight:500}
+.brand{min-width:0;display:flex;align-items:center;gap:12px}
+.header-family-art{position:relative;display:block;width:78px;height:62px;overflow:hidden;flex:0 0 auto}
+.header-family-source{position:absolute;left:0;top:0;width:235px;height:auto;max-width:none;transform:translate(-2px,-1px)}
+.header-brand-copy{display:flex;flex-direction:column;justify-content:center;min-width:0;line-height:1}
+.header-brand-copy strong{font-family:'Jua',Pretendard,"Noto Sans KR",sans-serif;font-size:1.52rem;line-height:1;letter-spacing:-.035em;font-weight:400;white-space:nowrap}
+.brand-name-main{color:#173f5d}.brand-name-accent{color:#5ca2d2}
+.header-brand-slogan{font-family:'Gowun Dodum',Pretendard,"Noto Sans KR",sans-serif;color:#7d694f;font-size:.72rem;line-height:1.28;letter-spacing:-.02em;margin-top:5px;white-space:nowrap}
 .story-cover-art{display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#e9f7fb,#fff3cb)}
 .story-cover-image{display:block;width:min(78%,310px);height:auto;border-radius:12px;box-shadow:0 18px 38px rgba(36,67,90,.2)}
-@media(max-width:1180px){.header-brand-tag{display:none}}
-@media(max-width:980px){.header-logo-crop{width:220px;height:60px}.official-header-logo{width:220px}}
+@media(max-width:1180px){.header-brand-slogan{display:none}.header-brand-copy strong{font-size:1.38rem}}
+@media(max-width:980px){.header-family-art{width:72px;height:58px}.header-family-source{width:218px}.header-brand-copy strong{font-size:1.33rem}}
 @media(max-width:640px){
-  .header-logo-crop{width:176px;height:52px}
-  .official-header-logo{width:176px;transform:translateY(-1px)}
-  .header-brand-tag{display:inline;font-size:.7rem;max-width:106px;white-space:normal;line-height:1.15}
-  .brand-divider{display:none}
-  .brand{gap:6px;max-width:calc(100% - 56px)}
+  .brand{gap:8px;max-width:calc(100% - 60px)}
+  .header-family-art{width:68px;height:55px}
+  .header-family-source{width:205px;transform:translate(-2px,0)}
+  .header-brand-copy strong{font-size:1.24rem}
+  .header-brand-slogan{display:block;font-size:.6rem;line-height:1.18;margin-top:4px;white-space:normal}
   .story-cover-art{min-height:auto;padding:20px}
   .story-cover-image{width:min(72%,260px)}
   .page-hero{padding:38px 0 34px}
