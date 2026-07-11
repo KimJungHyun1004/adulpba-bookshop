@@ -1,0 +1,11 @@
+h1,h2,h3,.choice strong{word-break:keep-all;overflow-wrap:break-word}
+@media(max-width:640px){
+  .page-hero{padding:38px 0 34px}
+  .page-hero h1{font-size:1.95rem;line-height:1.24;letter-spacing:-.045em;margin:14px 0 12px}
+  .page-hero p{font-size:.91rem;line-height:1.75}
+  .form-side{padding:23px 21px;border-radius:24px}
+  .form-side h2{font-size:1.45rem;line-height:1.42;letter-spacing:-.035em;margin-bottom:14px}
+  .form-side p,.form-side li{font-size:.88rem;line-height:1.7}
+  .form-side ul{padding-left:22px}
+  .form-card{margin-top:0}
+}
