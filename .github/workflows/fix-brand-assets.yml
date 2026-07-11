@@ -1,0 +1,209 @@
+name: Fix brand assets
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-brand-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build final integrated header logo
+        shell: bash
+        run: |
+          cp assets/logo-header.svg assets/logo-base.svg
+          cat > assets/logo-header.svg <<'EOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 233" role="img" aria-label="아둘빠 책방 - 아들 둘 아빠가 시작한 우리 아이 이야기">
+            <rect width="700" height="233" fill="#fff8ea"/>
+            <image href="logo-base.svg" x="0" y="0" width="700" height="233" preserveAspectRatio="xMidYMid meet"/>
+            <rect x="305" y="173" width="360" height="58" rx="8" fill="#fff8ea" opacity=".98"/>
+            <text x="485" y="195" text-anchor="middle" fill="#725e49" font-family="Arial, Noto Sans KR, sans-serif" font-size="19" font-weight="500" letter-spacing="2">아들 둘 아빠가 시작한</text>
+            <text x="485" y="222" text-anchor="middle" fill="#725e49" font-family="Arial, Noto Sans KR, sans-serif" font-size="19" font-weight="500" letter-spacing="2">우리 아이 이야기</text>
+          </svg>
+          EOF
+
+      - name: Create crisp Rubiya cover
+        shell: bash
+        run: |
+          cat > assets/rubiya-cover-final.svg <<'EOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1527" role="img" aria-label="루비야, 동화 속으로 데려다줘 표지">
+            <defs>
+              <radialGradient id="room" cx="50%" cy="28%" r="78%">
+                <stop offset="0" stop-color="#fff6c9"/>
+                <stop offset=".48" stop-color="#e9aa52"/>
+                <stop offset="1" stop-color="#8b4e29"/>
+              </radialGradient>
+              <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+                <stop stop-color="#153b69"/><stop offset="1" stop-color="#416fa0"/>
+              </linearGradient>
+              <linearGradient id="track" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#fffbe0"/><stop offset=".45" stop-color="#ffd45f"/><stop offset="1" stop-color="#fff7b3"/>
+              </linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="shadow"><feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#4a250f" flood-opacity=".28"/></filter>
+            </defs>
+            <rect width="1080" height="1527" fill="url(#room)"/>
+            <rect x="0" y="0" width="1080" height="1527" fill="#fff0c4" opacity=".14"/>
+
+            <!-- bedroom -->
+            <rect x="35" y="420" width="390" height="360" rx="54" fill="#b9773e"/>
+            <rect x="58" y="452" width="350" height="285" rx="34" fill="#d9b47b"/>
+            <path d="M60 575 Q230 510 408 575 V737 H60Z" fill="#718b8e"/>
+            <path d="M70 610 Q225 560 398 614" fill="none" stroke="#e7bd72" stroke-width="16" opacity=".75"/>
+            <circle cx="175" cy="600" r="56" fill="#e6aa48"/>
+            <path d="M175 554l14 30 33 4-24 23 6 33-29-16-29 16 6-33-24-23 33-4z" fill="#f8d07a"/>
+
+            <rect x="794" y="72" width="250" height="360" rx="20" fill="#77502f"/>
+            <rect x="817" y="95" width="204" height="314" fill="url(#night)"/>
+            <path d="M919 95v314M817 250h204" stroke="#e7c185" stroke-width="14"/>
+            <g fill="#ffe278"><circle cx="856" cy="142" r="7"/><circle cx="963" cy="175" r="6"/><circle cx="885" cy="318" r="5"/><circle cx="984" cy="350" r="8"/></g>
+            <path d="M765 45 Q840 150 786 438" fill="none" stroke="#d8c09a" stroke-width="45" opacity=".9"/>
+            <path d="M1046 45 Q987 150 1034 438" fill="none" stroke="#d8c09a" stroke-width="45" opacity=".9"/>
+
+            <rect x="795" y="520" width="250" height="330" rx="18" fill="#76502e"/>
+            <g fill="#d8a65a"><rect x="820" y="550" width="42" height="230"/><rect x="873" y="540" width="36" height="240"/><rect x="919" y="570" width="44" height="210"/><rect x="974" y="548" width="39" height="232"/></g>
+            <circle cx="956" cy="748" r="53" fill="#b98252"/><circle cx="938" cy="735" r="7" fill="#4d301f"/><circle cx="974" cy="735" r="7" fill="#4d301f"/><path d="M934 760q22 18 44 0" fill="none" stroke="#4d301f" stroke-width="7" stroke-linecap="round"/>
+
+            <!-- title glow -->
+            <ellipse cx="535" cy="230" rx="450" ry="205" fill="#fff8cc" opacity=".66" filter="url(#glow)"/>
+            <text x="540" y="105" text-anchor="middle" fill="#a83522" font-family="serif" font-size="82" font-weight="800">《루비야,</text>
+            <text x="540" y="202" text-anchor="middle" fill="#432618" font-family="serif" font-size="85" font-weight="900">동화 속으로</text>
+            <text x="540" y="300" text-anchor="middle" fill="#315b35" font-family="serif" font-size="85" font-weight="900">데려다줘》</text>
+            <g fill="#ffd45f" filter="url(#glow)"><path d="M126 100l9 22 23 3-17 15 5 23-20-12-20 12 5-23-17-15 23-3z"/><path d="M930 115l7 18 20 2-15 13 5 20-17-10-17 10 5-20-15-13 20-2z"/></g>
+            <rect x="278" y="330" width="524" height="66" rx="8" fill="#315b35" opacity=".94" filter="url(#shadow)"/>
+            <text x="540" y="375" text-anchor="middle" fill="#fff7d2" font-family="serif" font-size="33" font-weight="700">1권 : 《형아가 마술 보여줄까?》</text>
+            <text x="540" y="438" text-anchor="middle" fill="#39251d" font-family="serif" font-size="34">by N잡대디</text>
+
+            <!-- magical railway -->
+            <path d="M570 520 C840 580 550 720 780 800 C930 855 625 940 810 1085 C900 1155 855 1240 710 1328" fill="none" stroke="#fff2a3" stroke-width="42" opacity=".28" filter="url(#glow)"/>
+            <path d="M570 520 C840 580 550 720 780 800 C930 855 625 940 810 1085 C900 1155 855 1240 710 1328" fill="none" stroke="url(#track)" stroke-width="15" filter="url(#glow)"/>
+            <path d="M570 520 C840 580 550 720 780 800 C930 855 625 940 810 1085 C900 1155 855 1240 710 1328" fill="none" stroke="#8b5a30" stroke-width="3" stroke-dasharray="4 20"/>
+
+            <!-- star friend -->
+            <path d="M855 580l20 40 44 6-32 31 8 44-40-21-39 21 7-44-32-31 44-6z" fill="#fff59a" stroke="#fff4c2" stroke-width="9" filter="url(#glow)"/>
+            <circle cx="842" cy="635" r="5" fill="#5b4224"/><circle cx="869" cy="635" r="5" fill="#5b4224"/><path d="M842 652q14 12 28 0" fill="none" stroke="#5b4224" stroke-width="5" stroke-linecap="round"/>
+
+            <!-- older boy -->
+            <ellipse cx="380" cy="1080" rx="210" ry="245" fill="#263d58" opacity=".18"/>
+            <circle cx="380" cy="790" r="112" fill="#f3bd91"/>
+            <path d="M272 785 Q280 660 390 652 Q505 660 488 805 Q442 733 340 756 Q306 770 272 785Z" fill="#17202b"/>
+            <ellipse cx="340" cy="798" rx="13" ry="18" fill="#20232a"/><ellipse cx="422" cy="798" rx="13" ry="18" fill="#20232a"/>
+            <path d="M350 850q36 35 72 0" fill="none" stroke="#8b4c35" stroke-width="8" stroke-linecap="round"/>
+            <path d="M260 930 Q380 850 500 930 L545 1195 Q380 1290 215 1195Z" fill="#a8c4b7"/>
+            <path d="M275 1150q110 72 225 0" fill="#24384d"/>
+            <ellipse cx="255" cy="1185" rx="105" ry="48" fill="#f3bd91" transform="rotate(-18 255 1185)"/>
+            <ellipse cx="508" cy="1178" rx="105" ry="48" fill="#f3bd91" transform="rotate(15 508 1178)"/>
+
+            <!-- younger boy -->
+            <circle cx="735" cy="895" r="93" fill="#f3bd91"/>
+            <path d="M644 892 Q650 785 742 786 Q837 793 826 906 Q786 847 707 863 Q674 874 644 892Z" fill="#17202b"/>
+            <ellipse cx="704" cy="905" rx="11" ry="15" fill="#20232a"/><ellipse cx="772" cy="905" rx="11" ry="15" fill="#20232a"/>
+            <path d="M708 952q31 34 63 0" fill="none" stroke="#8b4c35" stroke-width="8" stroke-linecap="round"/>
+            <path d="M630 1000 Q735 945 840 1005 L860 1190 Q735 1255 610 1190Z" fill="#f5efe0"/>
+            <path d="M625 1125h235" stroke="#d9b67d" stroke-width="9" opacity=".7"/>
+            <rect x="686" y="1048" width="95" height="69" rx="12" fill="#b3452a"/>
+            <circle cx="708" cy="1120" r="17" fill="#2d2d2d"/><circle cx="760" cy="1120" r="17" fill="#2d2d2d"/>
+
+            <!-- foreground tracks and toys -->
+            <path d="M70 1320 C300 1185 475 1370 650 1265 C805 1173 925 1245 1035 1320" fill="none" stroke="#8b592c" stroke-width="38"/>
+            <path d="M70 1320 C300 1185 475 1370 650 1265 C805 1173 925 1245 1035 1320" fill="none" stroke="#d0a76a" stroke-width="25"/>
+            <path d="M85 1315 C305 1200 475 1383 650 1278 C810 1185 920 1255 1025 1325" fill="none" stroke="#6b4328" stroke-width="4" stroke-dasharray="5 24"/>
+            <g filter="url(#shadow)">
+              <rect x="470" y="1242" width="126" height="62" rx="11" fill="#2f693d"/><rect x="500" y="1203" width="58" height="44" rx="6" fill="#315d2f"/><circle cx="495" cy="1307" r="20" fill="#2b2420"/><circle cx="567" cy="1307" r="20" fill="#2b2420"/><rect x="595" y="1250" width="86" height="54" rx="8" fill="#c34c2c"/><circle cx="615" cy="1307" r="18" fill="#2b2420"/><circle cx="660" cy="1307" r="18" fill="#2b2420"/>
+            </g>
+            <g><rect x="70" y="1110" width="86" height="80" fill="#e0603e"/><rect x="145" y="1145" width="75" height="55" fill="#e3ad3e"/><rect x="885" y="1120" width="70" height="70" fill="#3e75a9"/><rect x="952" y="1180" width="68" height="58" fill="#d4613c"/></g>
+            <g fill="#fff3a7" opacity=".9" filter="url(#glow)"><circle cx="575" cy="570" r="7"/><circle cx="658" cy="620" r="5"/><circle cx="724" cy="706" r="8"/><circle cx="662" cy="810" r="5"/><circle cx="820" cy="925" r="7"/><circle cx="730" cy="1080" r="5"/></g>
+          </svg>
+          EOF
+
+      - name: Replace site behavior
+        shell: bash
+        run: |
+          cat > script.js <<'EOF'
+          const mobileFix=document.createElement('link');
+          mobileFix.rel='stylesheet';
+          mobileFix.href='mobile-fixes.css?v=10';
+          document.head.appendChild(mobileFix);
+
+          document.querySelectorAll('.brand').forEach((brand)=>{
+            brand.innerHTML='<img class="combined-header-logo" src="assets/logo-header.svg?v=10" alt="아둘빠 책방 — 아들 둘 아빠가 시작한 우리 아이 이야기">';
+            brand.setAttribute('aria-label','아둘빠 책방 홈');
+          });
+
+          const homeCover=document.querySelector('.book-cover');
+          if(homeCover){
+            const image=document.createElement('img');
+            image.className='book-cover real-book-cover';
+            image.src='assets/rubiya-cover-final.svg?v=10';
+            image.alt='루비야, 동화 속으로 데려다줘 책 표지';
+            homeCover.replaceWith(image);
+          }
+
+          const storyCover=document.querySelector('.case .case-art');
+          if(storyCover){
+            storyCover.classList.add('story-cover-art');
+            storyCover.innerHTML='<img class="story-cover-image" src="assets/rubiya-cover-final.svg?v=10" alt="루비야, 동화 속으로 데려다줘 실제 표지">';
+          }
+
+          const menu=document.querySelector('.menu');
+          const nav=document.querySelector('.navlinks');
+          menu?.addEventListener('click',()=>nav.classList.toggle('open'));
+          document.querySelectorAll('.navlinks a').forEach((a)=>a.addEventListener('click',()=>nav.classList.remove('open')));
+          const current=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+          document.querySelectorAll('.navlinks a').forEach((a)=>{
+            const target=(a.getAttribute('href')||'').split('#')[0].toLowerCase();
+            if(target===current||(current===''&&target==='index.html')) a.classList.add('active');
+          });
+          document.querySelectorAll('[data-year]').forEach((el)=>el.textContent=new Date().getFullYear());
+          const form=document.getElementById('bookForm');
+          form?.addEventListener('submit',(event)=>{
+            event.preventDefault();
+            const result=document.getElementById('result');
+            result?.classList.add('show');
+            result?.scrollIntoView({behavior:'smooth',block:'center'});
+          });
+          EOF
+
+      - name: Replace mobile overrides
+        shell: bash
+        run: |
+          cat > mobile-fixes.css <<'EOF'
+          h1,h2,h3,.choice strong{word-break:keep-all;overflow-wrap:break-word}
+          .brand{display:flex;align-items:center;min-width:0;overflow:visible}
+          .combined-header-logo{display:block;width:auto;height:66px;max-width:min(360px,42vw);object-fit:contain}
+          .story-cover-art{display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#e9f7fb,#fff3cb)}
+          .story-cover-image{display:block;width:min(78%,310px);height:auto;object-fit:contain;border-radius:12px;box-shadow:0 18px 38px rgba(36,67,90,.2)}
+          .real-book-cover{object-fit:contain;image-rendering:auto}
+          @media(max-width:1180px){.combined-header-logo{max-width:270px;height:62px}}
+          @media(max-width:980px){.nav{height:82px}.combined-header-logo{height:65px;max-width:235px}}
+          @media(max-width:640px){
+            .nav{height:84px}
+            .brand{max-width:calc(100% - 64px)}
+            .combined-header-logo{height:66px;max-width:220px}
+            .story-cover-art{min-height:auto;padding:20px}
+            .story-cover-image{width:min(72%,260px)}
+            .page-hero{padding:38px 0 34px}
+            .page-hero h1{font-size:1.95rem;line-height:1.24;letter-spacing:-.045em;margin:14px 0 12px}
+            .page-hero p{font-size:.91rem;line-height:1.75}
+            .form-side{padding:23px 21px;border-radius:24px}
+            .form-side h2{font-size:1.45rem;line-height:1.42;letter-spacing:-.035em;margin-bottom:14px}
+            .form-side p,.form-side li{font-size:.88rem;line-height:1.7}
+            .form-side ul{padding-left:22px}
+            .form-card{margin-top:0}
+          }
+          EOF
+
+      - name: Commit repaired files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add script.js mobile-fixes.css assets/logo-header.svg assets/logo-base.svg assets/rubiya-cover-final.svg
+          git commit -m "Fix integrated logo and Rubiya cover [skip ci]" || exit 0
+          git push
