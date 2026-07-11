@@ -1,4 +1,4 @@
-name: Extract direct image files
+name: Apply final logo and cover
 
 on:
   workflow_dispatch:
@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  extract:
-    if: "!contains(github.event.head_commit.message || '', '[image-extract]')"
+  apply-assets:
+    if: "!contains(github.event.head_commit.message || '', '[asset-layout]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -18,79 +18,82 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Extract JPEG files from SVG wrappers
+      - name: Apply uploaded final assets
         shell: bash
         run: |
           set -euo pipefail
+
+          if [ ! -s assets/adulpba-logo-v20.jpg ] || [ ! -s assets/rubiya-cover-v20.jpg ]; then
+            echo "Final image files are not uploaded yet. Nothing to apply."
+            exit 0
+          fi
+
+          cat > image-fixes-v20.css <<'CSS'
+          .brand{display:flex!important;align-items:center!important;min-width:0!important;max-width:calc(100% - 78px)!important;overflow:hidden!important}
+          .combined-header-logo{display:block!important;width:280px!important;max-width:100%!important;height:auto!important;max-height:74px!important;object-fit:contain!important;background:transparent!important}
+          .real-book-cover{display:block!important;height:auto!important;object-fit:contain!important;image-rendering:auto!important}
+          .visual-card .book-cover{width:min(58%,310px)!important;max-height:none!important}
+          .story-cover-art{display:flex!important;align-items:center!important;justify-content:center!important;padding:24px!important;background:linear-gradient(135deg,#e9f7fb,#fff3cb)!important}
+          .story-cover-image{display:block!important;width:min(78%,310px)!important;height:auto!important;object-fit:contain!important;border-radius:12px!important;box-shadow:0 18px 38px rgba(36,67,90,.2)!important}
+          @media(max-width:980px){
+            .nav{height:84px!important;min-height:84px!important}
+            .combined-header-logo{width:235px!important;max-width:calc(100vw - 110px)!important;max-height:72px!important}
+          }
+          @media(max-width:640px){
+            header .container.nav{height:84px!important;min-height:84px!important;padding-top:6px!important;padding-bottom:6px!important}
+            .brand{max-width:calc(100% - 72px)!important}
+            .combined-header-logo{width:220px!important;max-width:calc(100vw - 98px)!important;max-height:70px!important}
+            .visual-card .book-cover{width:min(66%,300px)!important}
+            .story-cover-art{padding:20px!important}
+            .story-cover-image{width:min(74%,280px)!important}
+          }
+          CSS
+
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           import re
-
-          def extract(src: str, dst: str) -> None:
-              text = Path(src).read_text(encoding="utf-8")
-              marker = "base64,"
-              if marker not in text:
-                  raise RuntimeError(f"base64 marker missing: {src}")
-              payload = text.split(marker, 1)[1].split('"', 1)[0]
-              payload = re.sub(r"\s+", "", payload)
-              payload += "=" * (-len(payload) % 4)
-              data = base64.b64decode(payload)
-              Path(dst).write_bytes(data)
-              print(f"created {dst}: {len(data)} bytes")
-
-          extract("assets/logo-base.svg", "assets/adulpba-logo.jpg")
-          extract("assets/sample-book-rubiya-cover.svg", "assets/rubiya-cover.jpg")
 
           pages = [
               "index.html", "products.html", "stories.html",
               "themes.html", "guide.html", "apply.html"
           ]
+
           for name in pages:
               path = Path(name)
               text = path.read_text(encoding="utf-8")
               text = re.sub(
-                  r"assets/logo-(?:base|header)\.svg(?:\?v=\d+)?",
-                  "assets/adulpba-logo.jpg?v=19",
+                  r"assets/(?:logo-base|logo-header|adulpba-logo)(?:-v\d+)?\.(?:svg|jpg)(?:\?v=\d+)?",
+                  "assets/adulpba-logo-v20.jpg?v=20",
                   text,
               )
               text = re.sub(
-                  r"assets/(?:sample-book-rubiya-cover|rubiya-cover-final)\.svg(?:\?v=\d+)?",
-                  "assets/rubiya-cover.jpg?v=19",
+                  r"assets/(?:sample-book-rubiya-cover|rubiya-cover-final|rubiya-cover)(?:-v\d+)?\.(?:svg|jpg)(?:\?v=\d+)?",
+                  "assets/rubiya-cover-v20.jpg?v=20",
                   text,
               )
               text = re.sub(
                   r"script(?:-v\d+)?\.js(?:\?v=\d+)?",
-                  "script.js?v=19",
+                  "script.js?v=20",
                   text,
               )
+              if "image-fixes-v20.css" not in text:
+                  text = text.replace(
+                      "</head>",
+                      '<link rel="stylesheet" href="image-fixes-v20.css?v=20"></head>',
+                      1,
+                  )
               path.write_text(text, encoding="utf-8")
-
-          Path("script.js").write_text(
-              '''const menu=document.querySelector(".menu");
-          const nav=document.querySelector(".navlinks");
-          menu?.addEventListener("click",()=>nav?.classList.toggle("open"));
-          document.querySelectorAll(".navlinks a").forEach(a=>a.addEventListener("click",()=>nav?.classList.remove("open")));
-          const current=(location.pathname.split("/").pop()||"index.html").toLowerCase();
-          document.querySelectorAll(".navlinks a").forEach(a=>{const target=(a.getAttribute("href")||"").split("#")[0].toLowerCase();if(target===current||(current===""&&target==="index.html"))a.classList.add("active")});
-          document.querySelectorAll("[data-year]").forEach(el=>el.textContent=new Date().getFullYear());
-          const form=document.getElementById("bookForm");
-          form?.addEventListener("submit",e=>{e.preventDefault();const result=document.getElementById("result");result?.classList.add("show");result?.scrollIntoView({behavior:"smooth",block:"center"})});
-          ''',
-              encoding="utf-8",
-          )
           PY
 
-          file assets/adulpba-logo.jpg assets/rubiya-cover.jpg
-          test -s assets/adulpba-logo.jpg
-          test -s assets/rubiya-cover.jpg
-
-      - name: Commit direct JPG files
+      - name: Commit final asset layout
         shell: bash
         run: |
           set -euo pipefail
+          if [ ! -s assets/adulpba-logo-v20.jpg ] || [ ! -s assets/rubiya-cover-v20.jpg ]; then
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/adulpba-logo.jpg assets/rubiya-cover.jpg index.html products.html stories.html themes.html guide.html apply.html script.js
-          git commit -m "Use direct JPG assets [image-extract]" || exit 0
+          git add assets/adulpba-logo-v20.jpg assets/rubiya-cover-v20.jpg image-fixes-v20.css index.html products.html stories.html themes.html guide.html apply.html
+          git commit -m "Apply final logo and cover layout [asset-layout]" || exit 0
           git push origin main
