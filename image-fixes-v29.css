@@ -1,0 +1,16 @@
+@import url("image-fixes-v28.css?v=28");
+
+/* The old selector also turned the highlighted words into a full-width block. */
+.mobile-title>span{display:block!important;white-space:nowrap!important}
+.mobile-title span span,
+.mobile-title .highlight{display:inline-block!important;white-space:nowrap!important;width:auto!important}
+
+@media(max-width:640px){
+  .hero .sales-title{font-size:clamp(1.95rem,8.15vw,2.2rem)!important;line-height:1.14!important;letter-spacing:-.058em!important}
+  .hero .sales-title .highlight:after{bottom:2px!important;height:13px!important;left:-2px!important;right:-2px!important}
+  .hero .lead{max-width:35rem}
+}
+
+@media(max-width:370px){
+  .hero .sales-title{font-size:1.88rem!important;letter-spacing:-.062em!important}
+}
