@@ -1,4 +1,4 @@
-name: Restore original logo composition
+name: Polish original logo header
 
 on:
   workflow_dispatch:
@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  restore-logo:
-    if: "!contains(github.event.head_commit.message || '', '[logo-original]')"
+  polish-logo:
+    if: "!contains(github.event.head_commit.message || '', '[logo-polish]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -18,18 +18,19 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Restore original logo with larger lettering
+      - name: Use the complete original logo and clean the top area
         shell: bash
         run: |
           set -euo pipefail
 
-          cat > image-fixes-v22.css <<'CSS'
-          .nav{height:108px!important;min-height:108px!important;gap:20px!important}
-          .brand.brand-original{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;max-width:380px!important;overflow:visible!important}
-          .brand-art,.brand-lettering{display:block;flex:0 0 auto;background-image:url("assets/adulpba-logo-v20.png?v=22");background-repeat:no-repeat;background-color:#fff8e9}
-          .brand-art{width:106px;height:82px;background-size:246px 82px;background-position:0 0;border-radius:16px}
-          .brand-lettering{width:218px;height:118px;background-size:354px 118px;background-position:-143px 0}
-          .menu{flex:0 0 auto!important}
+          cat > image-fixes-v23.css <<'CSS'
+          .notice{padding:7px 10px!important;font-size:.76rem!important;line-height:1.25!important;letter-spacing:-.025em!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+          header{border-bottom:1px solid #eadfcd!important}
+          header .container.nav{width:min(calc(100% - 18px),1120px)!important;height:118px!important;min-height:118px!important;gap:10px!important;padding-top:6px!important;padding-bottom:6px!important}
+          .brand.brand-original{display:block!important;flex:0 1 326px!important;width:326px!important;height:109px!important;max-width:calc(100% - 58px)!important;background:url("assets/adulpba-logo-v20.png?v=23") center/contain no-repeat!important;overflow:hidden!important}
+          .brand-art,.brand-lettering{display:none!important}
+          .menu{flex:0 0 auto!important;margin-left:auto!important;width:48px!important;height:48px!important;border-radius:16px!important}
+          .navlinks.open{top:118px!important}
 
           .visual-card{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-height:560px!important;padding:78px 26px 26px!important;overflow:hidden!important}
           .visual-card:before{z-index:0!important}
@@ -45,19 +46,17 @@ jobs:
           .story-cover-image{display:block!important;width:min(68%,320px)!important;height:auto!important;object-fit:contain!important;border-radius:10px!important;box-shadow:0 18px 38px rgba(36,67,90,.2)!important;transform:none!important}
 
           @media(max-width:980px){
-            .nav{height:102px!important;min-height:102px!important}
-            .navlinks.open{top:102px!important}
-            .brand.brand-original{max-width:calc(100% - 68px)!important;gap:8px!important}
-            .brand-art{width:94px;height:74px;background-size:222px 74px}
-            .brand-lettering{width:202px;height:112px;background-size:336px 112px;background-position:-136px 0}
+            header .container.nav{height:116px!important;min-height:116px!important}
+            .brand.brand-original{flex-basis:320px!important;width:320px!important;height:107px!important;max-width:calc(100% - 58px)!important}
+            .navlinks.open{top:116px!important}
           }
 
           @media(max-width:640px){
-            header .container.nav{height:100px!important;min-height:100px!important;padding-top:6px!important;padding-bottom:6px!important}
-            .brand.brand-original{max-width:calc(100% - 60px)!important;gap:6px!important}
-            .brand-art{width:88px;height:70px;background-size:210px 70px;background-position:0 0;border-radius:14px}
-            .brand-lettering{width:190px;height:106px;background-size:318px 106px;background-position:-128px 0}
-            .menu{width:48px!important;height:48px!important;border-radius:16px!important}
+            .notice{padding:6px 8px!important;font-size:.7rem!important}
+            header .container.nav{width:min(calc(100% - 12px),1120px)!important;height:112px!important;min-height:112px!important;padding-top:4px!important;padding-bottom:4px!important}
+            .brand.brand-original{flex-basis:310px!important;width:310px!important;height:103px!important;max-width:calc(100% - 54px)!important}
+            .menu{width:46px!important;height:46px!important;border-radius:15px!important}
+            .navlinks.open{top:112px!important}
 
             .visual-card{min-height:505px!important;padding:72px 18px 22px!important}
             .visual-card .float-note{left:16px!important;right:16px!important;top:16px!important;font-size:.72rem!important;padding:10px 11px!important}
@@ -80,48 +79,34 @@ jobs:
               "themes.html", "guide.html", "apply.html"
           ]
 
-          brand = (
-              '<a class="brand brand-original" href="index.html" aria-label="아둘빠 책방 홈">'
-              '<span class="brand-art" aria-hidden="true"></span>'
-              '<span class="brand-lettering" aria-hidden="true"></span>'
-              '</a><nav class="navlinks">'
-          )
-
           for name in pages:
               path = Path(name)
               text = path.read_text(encoding="utf-8")
               text = re.sub(
-                  r'<a class="brand(?: [^"]*)?" href="index\.html"[^>]*>.*?</a><nav class="navlinks">',
-                  brand,
-                  text,
-                  count=1,
-                  flags=re.S,
-              )
-              text = re.sub(
                   r'<link rel="stylesheet" href="image-fixes-v\d+\.css\?v=\d+">',
-                  '<link rel="stylesheet" href="image-fixes-v22.css?v=22">',
+                  '<link rel="stylesheet" href="image-fixes-v23.css?v=23">',
                   text,
               )
-              if "image-fixes-v22.css" not in text:
+              if "image-fixes-v23.css" not in text:
                   text = text.replace(
                       "</head>",
-                      '<link rel="stylesheet" href="image-fixes-v22.css?v=22"></head>',
+                      '<link rel="stylesheet" href="image-fixes-v23.css?v=23"></head>',
                       1,
                   )
               text = re.sub(
                   r'script(?:-v\d+)?\.js(?:\?v=\d+)?',
-                  'script.js?v=22',
+                  'script.js?v=23',
                   text,
               )
               path.write_text(text, encoding="utf-8")
           PY
 
-      - name: Commit original logo layout
+      - name: Commit polished logo header
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add image-fixes-v22.css index.html products.html stories.html themes.html guide.html apply.html
-          git commit -m "Restore original logo and enlarge lettering [logo-original]" || exit 0
+          git add image-fixes-v23.css index.html products.html stories.html themes.html guide.html apply.html
+          git commit -m "Polish original logo header and top strip [logo-polish]" || exit 0
           git push origin main
