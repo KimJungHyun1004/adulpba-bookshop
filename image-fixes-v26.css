@@ -1,0 +1,41 @@
+@import url("image-fixes-v25.css?v=25");
+
+.sale-price{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap}
+.sale-price del{font-size:.92rem;font-weight:700;color:#9aabb5;letter-spacing:-.02em;margin-bottom:4px}
+.sale-price strong{font-size:2rem;letter-spacing:-.055em;color:var(--navy)}
+.sale-chip{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;background:#fff0c7;color:#8a6515;font-size:.7rem;font-weight:900;margin-bottom:4px}
+
+.upgrade-mini{margin:0 0 17px;padding:15px 17px;border-radius:18px;background:linear-gradient(135deg,#fff7d8,#eef9fd);border:1px solid #eadca8}
+.upgrade-mini strong{display:block;font-size:.92rem;margin-bottom:4px;color:var(--navy)}
+.upgrade-mini span{display:block;font-size:.77rem;line-height:1.48;color:#607786}
+
+.upgrade-section{background:#fffdf7}
+.upgrade-box{display:grid;grid-template-columns:.92fr 1.08fr;gap:28px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:30px;padding:34px;box-shadow:0 17px 42px rgba(36,67,90,.08)}
+.upgrade-copy .eyebrow{margin-bottom:14px}
+.upgrade-copy h2{font-size:clamp(2rem,3.6vw,3.25rem);line-height:1.14;letter-spacing:-.055em;margin:0 0 14px}
+.upgrade-copy p{color:var(--muted);line-height:1.7;margin:0 0 16px}
+.upgrade-rule{font-size:.76rem;color:#728894;line-height:1.5}
+.upgrade-prices{display:grid;gap:12px}
+.upgrade-price-card{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:19px 20px;border:1px solid var(--line);border-radius:20px;background:#fafdff}
+.upgrade-price-card.featured{background:#eef9fd;border-color:#bcddea}
+.upgrade-price-card b{display:block;font-size:1rem;margin-bottom:3px}
+.upgrade-price-card small{display:block;color:var(--muted);font-size:.75rem;line-height:1.4}
+.upgrade-price-card strong{font-size:1.38rem;letter-spacing:-.045em;white-space:nowrap;color:var(--navy)}
+.upgrade-equation{margin-top:13px;padding:13px 15px;border-radius:16px;background:#eaf7ee;color:#326849;font-size:.8rem;font-weight:850;text-align:center}
+
+.offer-card .launch-note{font-size:.73rem;color:#8a6515;font-weight:850;margin-top:-10px;margin-bottom:15px}
+.offer-card .credit-note{padding:11px 13px;border-radius:14px;background:#eaf7ee;color:#326849;font-size:.76rem;line-height:1.48;margin:0 0 15px}
+.offer-card .credit-note b{display:block;margin-bottom:2px}
+
+.faq-policy-note{margin-top:18px;padding:16px 18px;border-radius:18px;background:#eef9fd;border:1px solid #c9e5ef;color:#4f7082;font-size:.82rem;line-height:1.6}
+.faq-policy-note b{color:var(--navy)}
+
+@media(max-width:980px){
+  .upgrade-box{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .sale-price strong{font-size:1.78rem}
+  .upgrade-box{padding:23px;border-radius:24px;gap:21px}
+  .upgrade-price-card{grid-template-columns:1fr;padding:17px}
+  .upgrade-price-card strong{font-size:1.22rem}
+}
