@@ -1,0 +1,61 @@
+name: Extract direct image files
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    if: "!contains(github.event.head_commit.message, '[image-extract]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Extract embedded JPEGs and update pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, base64
+
+          def extract(src, dst):
+              text = Path(src).read_text(encoding='utf-8')
+              m = re.search(r'data:image/(?:jpeg|jpg);base64,([^"\']+)', text, re.S)
+              if not m:
+                  raise RuntimeError(f'No embedded JPEG in {src}')
+              data = base64.b64decode(re.sub(r'\s+', '', m.group(1)))
+              Path(dst).write_bytes(data)
+
+          extract('assets/logo-base.svg', 'assets/adulpba-logo.jpg')
+          extract('assets/sample-book-rubiya-cover.svg', 'assets/rubiya-cover.jpg')
+
+          files = ['index.html','products.html','stories.html','themes.html','guide.html','apply.html']
+          for name in files:
+              p = Path(name)
+              s = p.read_text(encoding='utf-8')
+              s = re.sub(r'assets/logo-(?:base|header)\.svg(?:\?v=\d+)?', 'assets/adulpba-logo.jpg?v=18', s)
+              s = re.sub(r'assets/(?:sample-book-rubiya-cover|rubiya-cover-final)\.svg(?:\?v=\d+)?', 'assets/rubiya-cover.jpg?v=18', s)
+              s = re.sub(r'script(?:-v\d+)?\.js(?:\?v=\d+)?', 'script.js?v=18', s)
+              p.write_text(s, encoding='utf-8')
+
+          js = Path('script.js')
+          js.write_text('''const menu=document.querySelector(".menu");
+          const nav=document.querySelector(".navlinks");
+          menu?.addEventListener("click",()=>nav?.classList.toggle("open"));
+          document.querySelectorAll(".navlinks a").forEach(a=>a.addEventListener("click",()=>nav?.classList.remove("open")));
+          const current=(location.pathname.split("/").pop()||"index.html").toLowerCase();
+          document.querySelectorAll(".navlinks a").forEach(a=>{const target=(a.getAttribute("href")||"").split("#")[0].toLowerCase();if(target===current||(current===""&&target==="index.html"))a.classList.add("active")});
+          document.querySelectorAll("[data-year]").forEach(el=>el.textContent=new Date().getFullYear());
+          const form=document.getElementById("bookForm");
+          form?.addEventListener("submit",e=>{e.preventDefault();const result=document.getElementById("result");result?.classList.add("show");result?.scrollIntoView({behavior:"smooth",block:"center"})});\n''', encoding='utf-8')
+          PY
+      - name: Commit direct files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/adulpba-logo.jpg assets/rubiya-cover.jpg index.html products.html stories.html themes.html guide.html apply.html script.js
+          git commit -m "Use direct JPG assets [image-extract]" || exit 0
+          git push
