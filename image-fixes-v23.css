@@ -1,0 +1,44 @@
+.notice{padding:7px 10px!important;font-size:.76rem!important;line-height:1.25!important;letter-spacing:-.025em!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+header{border-bottom:1px solid #eadfcd!important}
+header .container.nav{width:min(calc(100% - 18px),1120px)!important;height:118px!important;min-height:118px!important;gap:10px!important;padding-top:6px!important;padding-bottom:6px!important}
+.brand.brand-original{display:block!important;flex:0 1 326px!important;width:326px!important;height:109px!important;max-width:calc(100% - 58px)!important;background:url("assets/adulpba-logo-v20.png?v=23") center/contain no-repeat!important;overflow:hidden!important}
+.brand-art,.brand-lettering{display:none!important}
+.menu{flex:0 0 auto!important;margin-left:auto!important;width:48px!important;height:48px!important;border-radius:16px!important}
+.navlinks.open{top:118px!important}
+
+.visual-card{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-height:560px!important;padding:78px 26px 26px!important;overflow:hidden!important}
+.visual-card:before{z-index:0!important}
+.visual-card>*{z-index:1}
+.visual-card .float-note{left:22px!important;top:20px!important;right:22px!important;width:auto!important;text-align:center!important;padding:11px 14px!important;font-size:.78rem!important;border-radius:18px!important}
+.book-stage{display:flex;align-items:center;justify-content:center;width:100%;min-height:370px}
+.visual-card .book-cover{position:relative!important;right:auto!important;top:auto!important;width:min(57%,300px)!important;max-height:none!important;transform:rotate(-1.5deg)!important;filter:drop-shadow(0 20px 24px rgba(36,67,90,.24))!important;border-radius:8px!important}
+.visual-card .family-card{display:none!important}
+.cover-caption{width:min(92%,430px);margin-top:16px;padding:14px 18px;background:rgba(255,255,255,.94);border:1px solid rgba(36,67,90,.1);border-radius:20px;text-align:center;box-shadow:0 12px 28px rgba(36,67,90,.09)}
+.cover-caption strong{display:block;font-size:1rem;line-height:1.35;letter-spacing:-.035em;color:#24435a;margin-bottom:4px}
+.cover-caption small{display:block;font-size:.76rem;line-height:1.45;color:#6a8292}
+.story-cover-art{display:flex!important;align-items:center!important;justify-content:center!important;padding:28px!important;background:linear-gradient(135deg,#e9f7fb,#fff3cb)!important}
+.story-cover-image{display:block!important;width:min(68%,320px)!important;height:auto!important;object-fit:contain!important;border-radius:10px!important;box-shadow:0 18px 38px rgba(36,67,90,.2)!important;transform:none!important}
+
+@media(max-width:980px){
+  header .container.nav{height:116px!important;min-height:116px!important}
+  .brand.brand-original{flex-basis:320px!important;width:320px!important;height:107px!important;max-width:calc(100% - 58px)!important}
+  .navlinks.open{top:116px!important}
+}
+
+@media(max-width:640px){
+  .notice{padding:6px 8px!important;font-size:.7rem!important}
+  header .container.nav{width:min(calc(100% - 12px),1120px)!important;height:112px!important;min-height:112px!important;padding-top:4px!important;padding-bottom:4px!important}
+  .brand.brand-original{flex-basis:310px!important;width:310px!important;height:103px!important;max-width:calc(100% - 54px)!important}
+  .menu{width:46px!important;height:46px!important;border-radius:15px!important}
+  .navlinks.open{top:112px!important}
+
+  .visual-card{min-height:505px!important;padding:72px 18px 22px!important}
+  .visual-card .float-note{left:16px!important;right:16px!important;top:16px!important;font-size:.72rem!important;padding:10px 11px!important}
+  .book-stage{min-height:330px}
+  .visual-card .book-cover{width:min(66%,258px)!important;transform:rotate(-1deg)!important}
+  .cover-caption{width:94%;margin-top:8px;padding:12px 14px;border-radius:17px}
+  .cover-caption strong{font-size:.9rem}
+  .cover-caption small{font-size:.7rem}
+  .story-cover-art{padding:22px!important}
+  .story-cover-image{width:min(72%,280px)!important}
+}
