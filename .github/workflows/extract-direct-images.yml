@@ -1,4 +1,4 @@
-name: Fix mobile hero and clarify eBook upgrade
+name: Conversion-focused site polish
 
 on:
   workflow_dispatch:
@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  mobile-title-and-upgrade:
-    if: "!contains(github.event.head_commit.message || '', '[site-v27]')"
+  conversion-polish:
+    if: "!contains(github.event.head_commit.message || '', '[site-v28]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -18,30 +18,132 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Fix product hero wrapping and clarify hardcover add-on
+      - name: Unify mobile headings, trust flow and preview form
         shell: bash
         run: |
           set -euo pipefail
 
-          cat > image-fixes-v27.css <<'CSS'
-          @import url("image-fixes-v26.css?v=26");
+          cat > image-fixes-v28.css <<'CSS'
+          @import url("image-fixes-v27.css?v=27");
 
-          .product-hero-title .mobile-title{display:none}
-          .product-hero-title .desktop-title{display:block}
-          .page-hero .product-hero-title{max-width:980px;text-wrap:balance;word-break:keep-all}
-          .page-hero .product-hero-copy{word-break:keep-all;max-width:760px}
+          /* Shared sales hierarchy */
+          .desktop-title{display:block}
+          .mobile-title{display:none}
+          .sales-title{max-width:980px;text-wrap:balance;word-break:keep-all}
+          .sales-copy{max-width:760px;word-break:keep-all}
+          .page-hero{position:relative;overflow:hidden}
+          .page-hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-120px;bottom:-150px;background:rgba(126,200,227,.12);pointer-events:none}
+          .page-hero .container{position:relative;z-index:1}
 
-          .ebook-credit-banner{margin-top:18px;padding:16px 18px;border-radius:18px;background:#eaf7ee;border:1px solid #c7e5d1;color:#326849;font-size:.82rem;line-height:1.55}
-          .ebook-credit-banner b{display:block;color:#234f38;font-size:.92rem;margin-bottom:3px}
+          .trust-strip{background:#fff;border-top:1px solid rgba(234,223,205,.72);border-bottom:1px solid rgba(234,223,205,.72);padding:24px 0}
+          .trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+          .trust-item{display:grid;grid-template-columns:42px 1fr;gap:11px;align-items:center;background:#fffdf9;border:1px solid var(--line);border-radius:18px;padding:15px 16px}
+          .trust-item i{font-style:normal;width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--sky2);font-size:1.25rem}
+          .trust-item b{display:block;font-size:.91rem;margin-bottom:2px}
+          .trust-item span{display:block;color:var(--muted);font-size:.75rem;line-height:1.42}
+
+          .conversion-proof{background:#fff}
+          .proof-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center}
+          .proof-copy h2{font-size:clamp(2rem,3.7vw,3.35rem);line-height:1.15;letter-spacing:-.055em;margin:15px 0}
+          .proof-copy p{color:var(--muted);max-width:620px}
+          .proof-points{display:grid;gap:10px;margin:20px 0 24px}
+          .proof-point{display:grid;grid-template-columns:38px 1fr;gap:11px;align-items:start;padding:13px 14px;border-radius:16px;background:#f8fcfd;border:1px solid #dcecf1}
+          .proof-point i{font-style:normal;width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#fff;font-weight:950;color:#337797}
+          .proof-point b{display:block;font-size:.9rem;margin-bottom:2px}
+          .proof-point span{display:block;color:var(--muted);font-size:.78rem;line-height:1.45}
+          .proof-book{background:linear-gradient(135deg,#e7f7fc,#fff2c9);border:8px solid #fff;border-radius:30px;min-height:430px;display:grid;place-items:center;padding:30px;box-shadow:var(--shadow)}
+          .proof-book img{width:min(66%,300px);border-radius:9px;box-shadow:0 23px 42px rgba(36,67,90,.22)}
+
+          .mini-price-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+          .mini-price{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:.76rem;font-weight:850}
+          .mini-price strong{color:#d06f54}
+
+          /* Short preview form */
+          .preview-form-shell{display:grid;grid-template-columns:.72fr 1.28fr;gap:24px;align-items:start}
+          .preview-side{position:sticky;top:132px;background:linear-gradient(150deg,#24435a,#315c78);color:#fff;border-radius:28px;padding:26px;box-shadow:var(--shadow)}
+          .preview-side h2{font-size:1.65rem;line-height:1.25;letter-spacing:-.045em;margin-bottom:10px}
+          .preview-side p{color:#d8e6ef;font-size:.9rem}
+          .preview-side-list{display:grid;gap:9px;margin:20px 0}
+          .preview-side-list div{display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:center;font-size:.84rem}
+          .preview-side-list i{font-style:normal;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.13)}
+          .privacy-mini{margin-top:17px;padding:13px;border-radius:15px;background:rgba(255,255,255,.1);font-size:.75rem;line-height:1.5;color:#e3edf3}
+          .preview-form-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:28px;box-shadow:var(--shadow)}
+          .form-progress{display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:.75rem;font-weight:850;color:#6b8291}
+          .form-progress b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff}
+          .form-section-title{font-size:1.08rem;margin:22px 0 12px;padding-top:19px;border-top:1px solid var(--line)}
+          .optional-details{margin:16px 0;border:1px solid var(--line);border-radius:17px;background:#fffdf9;overflow:hidden}
+          .optional-details summary{cursor:pointer;font-weight:850;padding:15px 17px;list-style:none}
+          .optional-details summary::-webkit-details-marker{display:none}
+          .optional-details summary:after{content:"＋";float:right;color:#5796b3}
+          .optional-details[open] summary:after{content:"−"}
+          .optional-fields{padding:0 17px 4px}
+          .form-trust-note{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;margin:18px 0;padding:14px;border-radius:15px;background:#eef9fd;color:#4e7082;font-size:.78rem;line-height:1.5}
+          .form-trust-note i{font-style:normal;width:36px;height:36px;border-radius:11px;background:#fff;display:grid;place-items:center}
+
+          /* Mobile persistent action */
+          .mobile-cta{display:none}
+
+          @media(max-width:980px){
+            .proof-grid,.preview-form-shell{grid-template-columns:1fr}
+            .preview-side{position:static}
+          }
 
           @media(max-width:640px){
-            .page-hero{padding:44px 0 38px!important}
-            .product-hero-title .desktop-title{display:none}
-            .product-hero-title .mobile-title{display:block}
-            .page-hero .product-hero-title{font-size:clamp(2.08rem,9.2vw,2.32rem)!important;line-height:1.16!important;letter-spacing:-.055em!important;margin:16px 0 17px!important}
-            .product-hero-title .mobile-title span{display:block;white-space:nowrap}
-            .page-hero .product-hero-copy{font-size:.94rem!important;line-height:1.75!important}
-            .product-intro-note{font-size:.82rem!important;line-height:1.7!important;padding:15px!important}
+            body{padding-bottom:82px}
+            .notice{font-size:.68rem!important}
+            header .container.nav{height:100px!important;min-height:100px!important}
+            .brand.brand-original{flex-basis:282px!important;width:282px!important;height:92px!important}
+            .navlinks.open{top:100px!important}
+
+            .page-hero{padding:36px 0 34px!important}
+            .page-hero .eyebrow{padding:7px 11px;font-size:.73rem}
+            .desktop-title{display:none!important}
+            .mobile-title{display:block!important}
+            .mobile-title span{display:block;white-space:nowrap}
+            .page-hero .sales-title{font-size:clamp(2rem,8.8vw,2.26rem)!important;line-height:1.16!important;letter-spacing:-.055em!important;margin:15px 0 16px!important}
+            .page-hero .sales-copy{font-size:.93rem!important;line-height:1.72!important;margin-bottom:0}
+
+            .hero{padding:40px 0 46px!important}
+            .hero .desktop-title{display:none!important}
+            .hero .mobile-title{display:block!important}
+            .hero .mobile-title span{display:block;white-space:nowrap}
+            .hero .sales-title{font-size:clamp(2.18rem,9.4vw,2.62rem)!important;line-height:1.12!important;letter-spacing:-.06em!important;margin:18px 0!important}
+            .hero .lead{font-size:.94rem!important;line-height:1.7!important;word-break:keep-all}
+            .hero-price-summary{margin-bottom:12px!important}
+            .upgrade-mini{margin-bottom:15px!important}
+
+            .trust-strip{padding:15px 0}
+            .trust-grid{grid-template-columns:1fr;gap:8px}
+            .trust-item{padding:12px 13px;border-radius:15px}
+            .trust-item i{width:38px;height:38px;border-radius:12px}
+
+            .section{padding:54px 0!important}
+            .head{margin-bottom:25px!important}
+            .head h2{font-size:2rem!important;line-height:1.18!important;word-break:keep-all}
+            .head p{font-size:.9rem;line-height:1.65;word-break:keep-all}
+
+            .proof-grid{gap:18px}
+            .proof-copy h2{font-size:2rem;word-break:keep-all}
+            .proof-book{min-height:340px;padding:22px;border-width:6px}
+            .proof-book img{width:min(70%,250px)}
+
+            .preview-form-card,.preview-side{padding:21px;border-radius:23px}
+            .preview-side h2{font-size:1.45rem}
+            .choice-grid{grid-template-columns:1fr!important}
+            .grid2{grid-template-columns:1fr!important}
+
+            .steps{grid-template-columns:1fr!important}
+            .step{padding:17px!important}
+            .themes{grid-template-columns:1fr 1fr!important;gap:10px!important}
+            .theme-card{min-height:155px!important;padding:17px!important}
+            .theme-card h3{font-size:1.12rem!important}
+            .theme-card p{font-size:.78rem!important;line-height:1.48}
+
+            .mobile-cta{position:fixed;display:flex;left:10px;right:10px;bottom:10px;z-index:90;align-items:center;gap:10px;padding:9px 10px 9px 15px;border-radius:21px;background:rgba(23,55,79,.96);color:#fff;box-shadow:0 14px 38px rgba(23,55,79,.28);backdrop-filter:blur(12px)}
+            .mobile-cta-copy{min-width:0;flex:1}
+            .mobile-cta-copy b{display:block;font-size:.8rem;line-height:1.3}
+            .mobile-cta-copy small{display:block;color:#cfe0ea;font-size:.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+            .mobile-cta .btn{flex:0 0 auto;padding:11px 15px;font-size:.76rem;background:var(--yellow);color:#284455;box-shadow:none}
           }
           CSS
 
@@ -49,109 +151,102 @@ jobs:
           from pathlib import Path
           import re
 
-          pages = [
-              "index.html", "products.html", "stories.html",
-              "themes.html", "guide.html", "apply.html"
-          ]
+          pages = ["index.html", "products.html", "stories.html", "themes.html", "guide.html", "apply.html"]
+
+          sticky = '<div class="mobile-cta"><div class="mobile-cta-copy"><b>우리 아이 책, 먼저 확인해보세요</b><small>맞춤 표지 + 예시 2페이지 · 결제 전</small></div><a class="btn" href="apply.html?mode=preview">무료 미리보기</a></div>'
 
           for name in pages:
               path = Path(name)
               text = path.read_text(encoding="utf-8")
-              text = re.sub(
-                  r'<link rel="stylesheet" href="image-fixes-v\d+\.css\?v=\d+">',
-                  '<link rel="stylesheet" href="image-fixes-v27.css?v=27">',
-                  text,
-              )
-              if "image-fixes-v27.css" not in text:
-                  text = text.replace(
-                      "</head>",
-                      '<link rel="stylesheet" href="image-fixes-v27.css?v=27"></head>',
-                      1,
-                  )
-              text = re.sub(
-                  r'script(?:-v\d+)?\.js(?:\?v=\d+)?',
-                  'script.js?v=27',
-                  text,
-              )
+              text = re.sub(r'<link rel="stylesheet" href="image-fixes-v\d+\.css\?v=\d+">', '<link rel="stylesheet" href="image-fixes-v28.css?v=28">', text)
+              if "image-fixes-v28.css" not in text:
+                  text = text.replace("</head>", '<link rel="stylesheet" href="image-fixes-v28.css?v=28"></head>', 1)
+              text = re.sub(r'script(?:-v\d+)?\.js(?:\?v=\d+)?', 'script.js?v=28', text)
+              text = re.sub(r'<div class="notice">.*?</div><header>', '<div class="notice">📚 <b>표지와 예시 2페이지 무료 확인</b> · eBook 오픈가 15,900원</div><header>', text, count=1)
+              text = text.replace('<a class="btn btn-primary btn-small" href="apply.html">제작 신청</a>', '<a class="btn btn-primary btn-small" href="apply.html?mode=preview">무료 미리보기</a>')
+              text = text.replace('<a href="apply.html">제작 신청</a>', '<a href="apply.html?mode=preview">무료 미리보기</a>')
+              if 'class="mobile-cta"' not in text:
+                  text = text.replace('</body>', sticky + '</body>', 1)
               path.write_text(text, encoding="utf-8")
 
-          products = Path("products.html")
-          text = products.read_text(encoding="utf-8")
-
-          old_title = '<h1>아이 사진으로 먼저 만나보고,<br>마음에 들면 한 권으로 만듭니다.</h1>'
-          new_title = '<h1 class="product-hero-title"><span class="desktop-title">아이 사진으로 먼저 만나보고,<br>마음에 들면 한 권으로 만듭니다.</span><span class="mobile-title"><span>아이 사진으로</span><span>먼저 만나보고,</span><span>마음에 들면</span><span>한 권으로 만듭니다.</span></span></h1>'
-          text = text.replace(old_title, new_title, 1)
-          text = text.replace(
-              '<p>맞춤 표지와 예시 2페이지를 먼저 확인한 뒤 전자책 또는 하드커버 실물책을 선택하는 방식으로 준비하고 있습니다.</p>',
-              '<p class="product-hero-copy">맞춤 표지와 예시 2페이지를 먼저 확인한 뒤 전자책 또는 하드커버 실물책을 선택하는 방식으로 준비하고 있습니다.</p>',
-              1,
-          )
-
-          text = text.replace(
-              'eBook → 하드커버 업그레이드',
-              'eBook 구매 후 실물책 추가',
-          )
-          text = text.replace(
-              'eBook을 먼저 구매한 뒤 실물책이 갖고 싶어져도 이중으로 결제하지 않습니다. 같은 이야기의 하드커버 1권으로 업그레이드할 때 실제 eBook 결제금액을 전액 차감합니다.',
-              'eBook을 먼저 구매한 뒤 실물책이 갖고 싶어지면 같은 이야기의 하드커버 1권을 추가로 주문할 수 있습니다. 이때 실제 eBook 결제금액을 전액 차감하며, 구매한 PDF는 그대로 소장합니다.',
-          )
-          text = text.replace(
-              '24페이지 하드커버로 업그레이드',
-              '24페이지 하드커버 추가 주문',
-          )
-          text = text.replace(
-              '32페이지 하드커버로 업그레이드',
-              '32페이지 하드커버 추가 주문',
-          )
-          text = text.replace(
-              '결국 처음부터 하드커버를 산 것과 같은 총금액이에요.',
-              'PDF는 그대로 소장하고, 총 결제금액은 처음부터 하드커버를 산 것과 같아요.',
-          )
-          text = text.replace(
-              '나중에 하드커버로 바꿔도 손해 없음',
-              '나중에 하드커버를 추가해도 손해 없음',
-          )
-          text = text.replace(
-              '60일 이내 업그레이드 시 실제 eBook 결제금액 전액 차감',
-              '60일 이내 실물책 추가 주문 시 실제 eBook 결제금액 전액 차감',
-          )
-          products.write_text(text, encoding="utf-8")
-
+          # Homepage: stronger first screen and trust/proof sections.
           index = Path("index.html")
           text = index.read_text(encoding="utf-8")
-          text = text.replace(
-              'eBook으로 먼저 구매해도 손해 없어요.',
-              'eBook으로 먼저 구매해도 손해 없어요.',
+          text = re.sub(
+              r'<h1>우리 아이의 오늘이,<br><span class="highlight">오래 남을 한 권</span>의<br>이야기가 됩니다\.</h1>',
+              '<h1 class="sales-title"><span class="desktop-title">우리 아이의 오늘이,<br><span class="highlight">오래 남을 한 권</span>의<br>이야기가 됩니다.</span><span class="mobile-title"><span>우리 아이의 오늘이,</span><span><span class="highlight">오래 남을 한 권</span>의</span><span>이야기가 됩니다.</span></span></h1>',
+              text,
+              count=1,
           )
-          text = text.replace(
-              '구매 후 60일 이내 같은 이야기의 하드커버 1권으로 업그레이드하면 실제 결제한 eBook 금액을 전액 빼드립니다.',
-              '구매 후 60일 이내 같은 이야기의 하드커버 1권을 추가 주문하면 실제 결제한 eBook 금액을 전액 빼드립니다. PDF는 그대로 소장해요.',
-          )
-          text = text.replace(
-              '하드커버 업그레이드 시 실제 eBook 결제금액 전액 차감',
-              '하드커버 추가 주문 시 실제 eBook 결제금액 전액 차감',
-          )
-          text = text.replace(
-              'eBook 구매 후 60일 안에 실물책으로 바꿔도 결제금액을 차감해요.',
-              'eBook 구매 후 60일 안에 실물책을 추가하면 결제금액을 차감해요.',
-          )
+          trust = '<section class="trust-strip"><div class="container trust-grid"><div class="trust-item"><i>👀</i><div><b>결제 전에 먼저 확인</b><span>맞춤 표지와 예시 2페이지를 보고 결정해요.</span></div></div><div class="trust-item"><i>💳</i><div><b>가격을 미리 공개</b><span>eBook 15,900원 · 하드커버 45,900원부터</span></div></div><div class="trust-item"><i>🔒</i><div><b>아이 사진은 제작에만</b><span>홍보 사용은 별도 동의 없이는 진행하지 않아요.</span></div></div></div></section>'
+          marker = '<section class="home-preview-flow">'
+          if 'class="trust-strip"' not in text:
+              text = text.replace(marker, trust + marker, 1)
+
+          proof = '<section class="section conversion-proof"><div class="container proof-grid"><div class="proof-copy"><span class="eyebrow">실제 가족 이야기에서 시작</span><h2>이름만 바꾸는 책이 아니라,<br>우리 아이답게 만듭니다.</h2><p>기차와 블록을 좋아하는 두 형제의 실제 놀이를 바탕으로 첫 책을 만들었습니다. 아이가 좋아하는 것과 가족의 관계가 이야기의 사건과 선택에 들어갑니다.</p><div class="proof-points"><div class="proof-point"><i>01</i><div><b>아이별 특징을 먼저 정리</b><span>얼굴, 머리, 옷, 키 차이와 성격을 기준으로 잡습니다.</span></div></div><div class="proof-point"><i>02</i><div><b>처음과 끝이 있는 한 편의 동화</b><span>예쁜 이미지 모음이 아니라 사건이 이어지는 이야기를 만듭니다.</span></div></div><div class="proof-point"><i>03</i><div><b>PDF부터 실물책까지 같은 이야기</b><span>eBook 구매 뒤 실물책을 추가해도 결제금액을 차감합니다.</span></div></div></div><a class="btn btn-primary" href="stories.html">실제 제작 사례 보기</a><div class="mini-price-row"><span class="mini-price">eBook <strong>15,900원</strong></span><span class="mini-price">하드커버 <strong>45,900원부터</strong></span></div></div><div class="proof-book"><img src="assets/rubiya-cover-v20.jpg?v=28" alt="루비야 동화책 실제 제작 표지"></div></div></section>'
+          sample_marker = '<section class="section white"><div class="container sample">'
+          if 'class="conversion-proof"' not in text:
+              text = text.replace(sample_marker, proof + sample_marker, 1)
           index.write_text(text, encoding="utf-8")
 
+          # Products hero: stable line breaks on both desktop and mobile.
+          products = Path("products.html")
+          text = products.read_text(encoding="utf-8")
+          text = re.sub(
+              r'<h1 class="product-hero-title">.*?</h1>',
+              '<h1 class="sales-title"><span class="desktop-title">아이 사진으로 먼저 만나보고,<br>마음에 들면 한 권으로 만듭니다.</span><span class="mobile-title"><span>아이 사진으로</span><span>먼저 만나보고,</span><span>마음에 들면</span><span>한 권으로 만듭니다.</span></span></h1>',
+              text,
+              count=1,
+              flags=re.S,
+          )
+          text = text.replace('class="product-hero-copy"', 'class="sales-copy"', 1)
+          products.write_text(text, encoding="utf-8")
+
+          # Stories hero and bottom conversion CTA.
+          stories = Path("stories.html")
+          text = stories.read_text(encoding="utf-8")
+          text = text.replace(
+              '<h1>아이의 취향과 가족의 순간이<br>어떻게 책이 되는지 보여드려요.</h1><p>현재는 두 형제를 위해 만든 첫 번째 샘플을 중심으로 공개합니다. 실제 고객 사례는 별도 홍보 동의를 받은 경우에만 추가할 예정입니다.</p>',
+              '<h1 class="sales-title"><span class="desktop-title">아이의 취향과 가족의 순간이<br>어떻게 책이 되는지 보여드려요.</span><span class="mobile-title"><span>아이의 취향과</span><span>가족의 순간이</span><span>어떻게 책이 되는지</span><span>보여드려요.</span></span></h1><p class="sales-copy">현재는 두 형제를 위해 만든 첫 번째 샘플을 중심으로 공개합니다. 실제 고객 사례는 별도 홍보 동의를 받은 경우에만 추가할 예정입니다.</p>',
+              1,
+          )
+          if '사례를 보고 우리 아이 책도 상상해보세요.' not in text:
+              text = text.replace('</main>', '<section class="section white"><div class="container cta-band"><div><span class="eyebrow">무료 미리보기</span><h2 style="font-size:clamp(2rem,3.6vw,3.3rem);line-height:1.15;letter-spacing:-.05em;margin:17px 0">사례를 보고 우리 아이 책도<br>상상해보세요.</h2><p>맞춤 표지와 예시 2페이지를 결제 전에 먼저 확인할 수 있습니다.</p><a class="btn btn-sky" href="apply.html?mode=preview">무료 미리보기 신청</a></div><div class="slots"><div class="slot open"><strong>사진 1~3장</strong><small>정면 얼굴과 자연스러운 표정</small></div><div class="slot open"><strong>이름·나이·좋아하는 것</strong><small>미리보기에 필요한 최소 정보</small></div><div class="slot open"><strong>결제는 결과 확인 후</strong><small>eBook 또는 하드커버 선택</small></div></div></div></section></main>', 1)
+          stories.write_text(text, encoding="utf-8")
+
+          # Themes hero and stronger action wording.
+          themes = Path("themes.html")
+          text = themes.read_text(encoding="utf-8")
+          text = text.replace(
+              '<h1>좋아하는 세계를 고르면,<br>우리 아이의 모험이 시작돼요.</h1><p>테마는 배경일 뿐입니다. 아이의 이름과 성격, 좋아하는 것에 맞춰 주인공의 선택과 대사를 바꿉니다.</p>',
+              '<h1 class="sales-title"><span class="desktop-title">좋아하는 세계를 고르면,<br>우리 아이의 모험이 시작돼요.</span><span class="mobile-title"><span>좋아하는 세계를</span><span>고르면,</span><span>우리 아이의 모험이</span><span>시작돼요.</span></span></h1><p class="sales-copy">테마는 배경일 뿐입니다. 아이의 이름과 성격, 좋아하는 것에 맞춰 주인공의 선택과 대사를 바꿉니다.</p>',
+              1,
+          )
+          text = text.replace('테마 골라 신청하기', '이 테마로 무료 미리보기', 1)
+          themes.write_text(text, encoding="utf-8")
+
+          # Guide: rewrite as a clear reassurance page.
+          guide = Path("guide.html")
+          text = guide.read_text(encoding="utf-8")
+          guide_main = '''<main><section class="page-hero"><div class="container"><span class="eyebrow">이용 안내</span><h1 class="sales-title"><span class="desktop-title">부모는 아이 이야기를 들려주세요.<br>책을 만드는 일은 저희가 맡을게요.</span><span class="mobile-title"><span>부모는 아이 이야기를</span><span>들려주세요.</span><span>책을 만드는 일은</span><span>저희가 맡을게요.</span></span></h1><p class="sales-copy">무료 미리보기부터 전체 제작, 사진 보관과 수정 범위까지 부모님이 궁금해할 내용을 먼저 정리했습니다.</p></div></section><section class="trust-strip"><div class="container trust-grid"><div class="trust-item"><i>✨</i><div><b>먼저 보고 결정</b><span>표지와 예시 2페이지 확인 후 결제합니다.</span></div></div><div class="trust-item"><i>🧾</i><div><b>가격과 범위 공개</b><span>상품 가격과 포함 내용을 미리 안내합니다.</span></div></div><div class="trust-item"><i>🔐</i><div><b>사진 사용 분리 동의</b><span>제작과 홍보 동의를 따로 받습니다.</span></div></div></div></section><section class="section white"><div class="container"><div class="head center"><span class="eyebrow">제작 과정</span><h2>사진 접수부터 배송까지 다섯 단계</h2><p>처음부터 긴 신청서를 작성하지 않아도 됩니다. 미리보기에는 최소 정보만 사용해요.</p></div><div class="steps"><article class="step"><em>STEP 01</em><h3>간단 정보 접수</h3><p>사진 1~3장, 이름, 나이와 좋아하는 것을 알려주세요.</p></article><article class="step"><em>STEP 02</em><h3>무료 미리보기</h3><p>맞춤 표지와 예시 2페이지로 아이 모습과 분위기를 먼저 확인합니다.</p></article><article class="step"><em>STEP 03</em><h3>상품 선택·결제</h3><p>eBook 또는 24·32페이지 하드커버 중 원하는 구성을 선택합니다.</p></article><article class="step"><em>STEP 04</em><h3>전체 이야기 제작</h3><p>상세 에피소드와 메시지를 받아 나머지 장면과 글을 완성합니다.</p></article><article class="step"><em>STEP 05</em><h3>최종 확인·전달</h3><p>PDF를 전달하거나 인쇄·제본 후 실물책을 배송합니다.</p></article></div></div></section><section class="section blue"><div class="container guide-grid"><article class="guide-card"><h2>사진 준비 방법</h2><ul><li>얼굴이 또렷한 최근 사진 1~3장</li><li>정면과 자연스러운 표정 권장</li><li>모자·마스크가 없는 사진</li><li>가능하면 전신 사진 1장</li><li>형제 등장 시 인물별 사진</li></ul></article><article class="guide-card"><h2>수정과 제작 기간</h2><ul><li>미리보기 확인 후 전체 제작 결정</li><li>기본 시안 수정 1회 예정</li><li>전체 스토리 변경은 별도 협의</li><li>초기 제작 기간 10~20일 예상</li><li>인쇄 확정 후 내용 수정 불가</li></ul></article><article class="guide-card"><h2>사진과 개인정보</h2><p>사진은 미리보기와 책 제작 목적으로만 사용합니다. 보관 기간은 정식 오픈 전에 명확히 고지하고, 기간이 지나면 삭제합니다. 홈페이지나 SNS 공개는 별도 홍보 동의를 받은 경우에만 진행합니다.</p></article><article class="guide-card"><h2>가격과 실물책 추가</h2><p>eBook 오픈가는 15,900원, 하드커버는 45,900원부터 검토 중입니다. eBook 구매 후 60일 이내 같은 이야기의 실물책 1권을 추가하면 실제 eBook 결제금액을 전액 차감하고 PDF는 그대로 소장합니다.</p></article></div></section><section class="section white"><div class="container"><div class="head center"><span class="eyebrow">자주 묻는 질문</span><h2>신청 전에 궁금한 내용을 확인해보세요.</h2></div><div class="faq"><details><summary>무료 미리보기에는 무엇이 나오나요?</summary><p>아이 정보를 반영한 맞춤 표지와 대표 장면 예시 2페이지를 보여드리는 방식으로 준비하고 있습니다.</p></details><details><summary>아이 사진은 몇 장 필요한가요?</summary><p>미리보기는 얼굴이 또렷한 최근 사진 1~3장으로 시작할 수 있습니다. 전체 제작 단계에서 필요한 사진을 추가로 안내합니다.</p></details><details><summary>형제나 부모도 함께 등장할 수 있나요?</summary><p>가능합니다. 등장 인원이 늘어나면 제작 난이도와 비용이 달라질 수 있어 결제 전에 안내합니다.</p></details><details><summary>사진은 어떻게 보관하나요?</summary><p>제작 목적으로만 사용하고 고지한 보관 기간이 지나면 삭제합니다. 홍보 사용은 제작 동의와 분리해 별도로 받습니다.</p></details><details><summary>eBook 구매 후 실물책도 살 수 있나요?</summary><p>구매 후 60일 이내 같은 이야기의 하드커버 1권을 추가 주문하면 실제 결제한 eBook 금액을 전액 차감합니다. PDF는 그대로 소장합니다.</p></details><details><summary>가격은 확정됐나요?</summary><p>현재 eBook 오픈가 15,900원, 하드커버 45,900원부터를 검토 중입니다. 인쇄·배송 견적 확인 후 정식 오픈 전에 최종 확정합니다.</p></details></div><div class="faq-policy-note"><b>차감 기준</b><br>할인 여부와 관계없이 실제 결제한 eBook 금액을 차감합니다. 오픈가 15,900원에 구매했다면 15,900원이 차감됩니다.</div></div></section></main>'''
+          text = re.sub(r'<main>.*?</main>', guide_main, text, count=1, flags=re.S)
+          guide.write_text(text, encoding="utf-8")
+
+          # Apply: short first-step form with optional details.
           apply = Path("apply.html")
           text = apply.read_text(encoding="utf-8")
-          text = text.replace(
-              'eBook 구매 뒤 60일 이내 실물책으로 업그레이드하면 실제 결제금액을 전액 차감하는 방식으로 준비 중입니다.',
-              'eBook 구매 뒤 60일 이내 같은 이야기의 실물책을 추가 주문하면 실제 결제금액을 전액 차감하며, PDF는 그대로 소장하는 방식으로 준비 중입니다.',
-          )
+          apply_main = '''<main><section class="page-hero"><div class="container"><span class="eyebrow">무료 미리보기 신청 시안</span><h1 class="sales-title"><span class="desktop-title">우리 아이가 책 속에 들어간 모습,<br>먼저 확인해보세요.</span><span class="mobile-title"><span>우리 아이가</span><span>책 속에 들어간 모습,</span><span>먼저 확인해보세요.</span></span></h1><p class="sales-copy">사진과 최소 정보로 맞춤 표지와 예시 2페이지를 먼저 보여드리는 화면입니다. 현재는 브랜드 준비 단계라 실제 전송과 사진 업로드는 연결되지 않았습니다.</p></div></section><section class="trust-strip"><div class="container trust-grid"><div class="trust-item"><i>🆓</i><div><b>미리보기는 결제 전</b><span>결과를 본 뒤 전체 제작 여부를 정해요.</span></div></div><div class="trust-item"><i>💰</i><div><b>전체 가격 미리 안내</b><span>eBook 15,900원 · 하드커버 45,900원부터</span></div></div><div class="trust-item"><i>🔒</i><div><b>사진은 제작에만 사용</b><span>홍보 공개는 별도 동의를 받습니다.</span></div></div></div></section><section class="section blue"><div class="container preview-form-shell"><aside class="preview-side"><span class="eyebrow">약 2분이면 충분해요</span><h2>미리보기에는<br>이 정도만 필요합니다.</h2><p>상세 가족 이야기와 편지는 전체 제작을 선택한 뒤 천천히 받아요.</p><div class="preview-side-list"><div><i>1</i><span>아이 이름과 나이</span></div><div><i>2</i><span>좋아하는 것과 테마</span></div><div><i>3</i><span>얼굴이 또렷한 사진 1~3장</span></div><div><i>4</i><span>보호자 연락 방법</span></div></div><div class="privacy-mini">현재 시안에서는 실제 업로드와 전송이 되지 않습니다. 정식 오픈 전 사진 보관 기간과 삭제 기준을 명확히 안내합니다.</div></aside><form class="preview-form-card" id="bookForm"><div class="form-progress"><b>1</b><span>무료 미리보기 기본정보</span></div><div class="choice-grid"><label class="choice"><input type="radio" name="bookType" value="맞춤 동화책" required><strong>🌙 맞춤 동화책</strong><span>아이를 동화 캐릭터로</span></label><label class="choice"><input type="radio" name="bookType" value="성장이야기 책" required><strong>🌱 성장이야기</strong><span>사진과 기록을 한 권으로</span></label><label class="choice"><input type="radio" name="bookType" value="사진 주인공 스토리북" required><strong>🚀 사진 스토리북</strong><span>아이 사진 그대로 모험 속으로</span></label></div><div class="grid2"><div class="field"><label for="childName">아이 이름</label><input id="childName" name="childName" placeholder="예: 다훈" required></div><div class="field"><label for="age">나이</label><input id="age" name="age" placeholder="예: 7세" required></div></div><div class="field"><label>좋아하는 테마</label><div class="chips"><label class="chip"><input type="radio" name="theme" value="바다"><span>🐳 바다</span></label><label class="chip"><input type="radio" name="theme" value="우주"><span>🪐 우주</span></label><label class="chip"><input type="radio" name="theme" value="공룡"><span>🦕 공룡</span></label><label class="chip"><input type="radio" name="theme" value="마법"><span>🪄 마법</span></label><label class="chip"><input type="radio" name="theme" value="탐험"><span>🧭 탐험</span></label><label class="chip"><input type="radio" name="theme" value="미래"><span>🤖 미래</span></label></div></div><div class="field"><label for="likes">아이가 좋아하는 것</label><input id="likes" name="likes" placeholder="예: 기차, 블록, 딸기우유"></div><div class="field"><label for="photoMock">아이 사진 1~3장</label><input id="photoMock" type="text" value="정식 오픈 시 사진 업로드가 연결됩니다" disabled></div><div class="grid2"><div class="field"><label for="parent">보호자 이름</label><input id="parent" name="parent" placeholder="신청자 이름" required></div><div class="field"><label for="contact">연락 방법</label><input id="contact" name="contact" placeholder="이메일 또는 연락처" required></div></div><details class="optional-details"><summary>더 알려주고 싶은 내용이 있어요</summary><div class="optional-fields"><div class="field"><label for="personality">아이 성격</label><input id="personality" name="personality" placeholder="예: 호기심이 많고 동생을 잘 챙겨요"></div><div class="field"><label for="story">기억에 남는 에피소드</label><textarea id="story" name="story" placeholder="전체 제작 때 꼭 넣고 싶은 일이 있다면 적어주세요."></textarea></div><div class="field"><label for="message">아이에게 전하고 싶은 말</label><textarea id="message" name="message" placeholder="예: 언제나 너답게 용감하고 따뜻하게 자라렴."></textarea></div></div></details><div class="form-trust-note"><i>💡</i><div><b>전체 제작 예상가</b><br>eBook 오픈가 15,900원 · 24페이지 하드커버 45,900원 · 32페이지 하드커버 49,900원. 미리보기 확인 후 선택합니다.</div></div><label class="agree"><input type="checkbox" required><span>현재 신청 시안 테스트에 동의합니다. 입력 내용은 실제로 전송되지 않습니다.</span></label><button class="btn btn-primary" type="submit">무료 미리보기 신청 내용 확인</button><div class="result" id="result">신청 화면이 정상적으로 작동해요. 실제 사진 업로드와 접수는 다음 단계에서 연결합니다 😊</div></form></div></section></main>'''
+          text = re.sub(r'<main>.*?</main>', apply_main, text, count=1, flags=re.S)
+          text = text.replace('href="apply.html?mode=preview">무료 미리보기</a></div></body>', 'href="#bookForm">신청서로 이동</a></div></body>')
           apply.write_text(text, encoding="utf-8")
           PY
 
-      - name: Commit mobile title and upgrade wording
+      - name: Commit conversion-focused polish
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add image-fixes-v27.css index.html products.html stories.html themes.html guide.html apply.html
-          git commit -m "Fix mobile title wrapping and clarify eBook credit [site-v27]" || exit 0
+          git add image-fixes-v28.css index.html products.html stories.html themes.html guide.html apply.html
+          git commit -m "Polish mobile conversion flow and trust content [site-v28]" || exit 0
           git push origin main
