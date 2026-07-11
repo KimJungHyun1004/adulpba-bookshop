@@ -1,4 +1,4 @@
-name: Add transparent preview pricing
+name: Add eBook launch price and upgrade credit
 
 on:
   workflow_dispatch:
@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  preview-pricing:
-    if: "!contains(github.event.head_commit.message || '', '[site-v25]')"
+  ebook-upgrade:
+    if: "!contains(github.event.head_commit.message || '', '[site-v26]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -18,38 +18,52 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Emphasize free preview with transparent prices
+      - name: Add launch discount and hardcover upgrade credit
         shell: bash
         run: |
           set -euo pipefail
 
-          cat > image-fixes-v25.css <<'CSS'
-          @import url("image-fixes-v24.css?v=24");
+          cat > image-fixes-v26.css <<'CSS'
+          @import url("image-fixes-v25.css?v=25");
 
-          .hero-price-summary{margin:18px 0 17px;padding:16px 18px;background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 26px rgba(36,67,90,.06)}
-          .hero-price-summary>strong{display:block;font-size:.78rem;color:#4e7d95;margin-bottom:7px}
-          .hero-price-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:1rem;letter-spacing:-.03em}
-          .hero-price-row b{font-size:1.08rem;color:var(--navy)}
-          .hero-price-row i{font-style:normal;color:#9aabb5}
-          .hero-price-summary small{display:block;margin-top:6px;color:var(--muted);font-size:.72rem;line-height:1.45}
-          .hero .hero-actions{margin-bottom:0!important}
-          .hero-free-label{display:inline-flex;align-items:center;gap:5px;margin-left:4px;padding:4px 8px;border-radius:999px;background:#e8f7ec;color:#24734a;font-size:.7rem;font-weight:900;vertical-align:middle}
+          .sale-price{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap}
+          .sale-price del{font-size:.92rem;font-weight:700;color:#9aabb5;letter-spacing:-.02em;margin-bottom:4px}
+          .sale-price strong{font-size:2rem;letter-spacing:-.055em;color:var(--navy)}
+          .sale-chip{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;background:#fff0c7;color:#8a6515;font-size:.7rem;font-weight:900;margin-bottom:4px}
 
-          .preview-promise{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:20px}
-          .preview-promise-main,.preview-promise-price{background:#fff;border:1px solid var(--line);border-radius:20px;padding:17px 18px}
-          .preview-promise-main strong,.preview-promise-price strong{display:block;margin-bottom:5px}
-          .preview-promise-main span,.preview-promise-price span{display:block;color:var(--muted);font-size:.82rem;line-height:1.5}
-          .preview-promise-price b{display:block;font-size:1.12rem;margin-top:8px;color:var(--navy)}
+          .upgrade-mini{margin:0 0 17px;padding:15px 17px;border-radius:18px;background:linear-gradient(135deg,#fff7d8,#eef9fd);border:1px solid #eadca8}
+          .upgrade-mini strong{display:block;font-size:.92rem;margin-bottom:4px;color:var(--navy)}
+          .upgrade-mini span{display:block;font-size:.77rem;line-height:1.48;color:#607786}
 
-          .format-choice-note{margin:0 0 18px;padding:14px 16px;background:#eef9fd;border:1px solid #cde8f3;border-radius:16px;color:#476a7f;font-size:.82rem;line-height:1.5}
-          .format-choice-note b{color:var(--navy)}
+          .upgrade-section{background:#fffdf7}
+          .upgrade-box{display:grid;grid-template-columns:.92fr 1.08fr;gap:28px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:30px;padding:34px;box-shadow:0 17px 42px rgba(36,67,90,.08)}
+          .upgrade-copy .eyebrow{margin-bottom:14px}
+          .upgrade-copy h2{font-size:clamp(2rem,3.6vw,3.25rem);line-height:1.14;letter-spacing:-.055em;margin:0 0 14px}
+          .upgrade-copy p{color:var(--muted);line-height:1.7;margin:0 0 16px}
+          .upgrade-rule{font-size:.76rem;color:#728894;line-height:1.5}
+          .upgrade-prices{display:grid;gap:12px}
+          .upgrade-price-card{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:19px 20px;border:1px solid var(--line);border-radius:20px;background:#fafdff}
+          .upgrade-price-card.featured{background:#eef9fd;border-color:#bcddea}
+          .upgrade-price-card b{display:block;font-size:1rem;margin-bottom:3px}
+          .upgrade-price-card small{display:block;color:var(--muted);font-size:.75rem;line-height:1.4}
+          .upgrade-price-card strong{font-size:1.38rem;letter-spacing:-.045em;white-space:nowrap;color:var(--navy)}
+          .upgrade-equation{margin-top:13px;padding:13px 15px;border-radius:16px;background:#eaf7ee;color:#326849;font-size:.8rem;font-weight:850;text-align:center}
 
+          .offer-card .launch-note{font-size:.73rem;color:#8a6515;font-weight:850;margin-top:-10px;margin-bottom:15px}
+          .offer-card .credit-note{padding:11px 13px;border-radius:14px;background:#eaf7ee;color:#326849;font-size:.76rem;line-height:1.48;margin:0 0 15px}
+          .offer-card .credit-note b{display:block;margin-bottom:2px}
+
+          .faq-policy-note{margin-top:18px;padding:16px 18px;border-radius:18px;background:#eef9fd;border:1px solid #c9e5ef;color:#4f7082;font-size:.82rem;line-height:1.6}
+          .faq-policy-note b{color:var(--navy)}
+
+          @media(max-width:980px){
+            .upgrade-box{grid-template-columns:1fr}
+          }
           @media(max-width:640px){
-            .hero-price-summary{padding:14px 15px;margin-top:15px}
-            .hero-price-row{gap:5px;font-size:.91rem}
-            .hero-price-row b{font-size:1rem}
-            .preview-promise{grid-template-columns:1fr}
-            .preview-promise-main,.preview-promise-price{padding:15px}
+            .sale-price strong{font-size:1.78rem}
+            .upgrade-box{padding:23px;border-radius:24px;gap:21px}
+            .upgrade-price-card{grid-template-columns:1fr;padding:17px}
+            .upgrade-price-card strong{font-size:1.22rem}
           }
           CSS
 
@@ -65,83 +79,110 @@ jobs:
           for name in pages:
               path = Path(name)
               text = path.read_text(encoding="utf-8")
-              text = text.replace(
-                  '📚 <b>한 권씩 확인하며</b> 정성껏 만듭니다 · 브랜드 오픈 준비 중',
-                  '📚 <b>맞춤 표지와 예시 2페이지</b>를 먼저 확인하세요 · 오픈 준비 중',
-              )
               text = re.sub(
                   r'<link rel="stylesheet" href="image-fixes-v\d+\.css\?v=\d+">',
-                  '<link rel="stylesheet" href="image-fixes-v25.css?v=25">',
+                  '<link rel="stylesheet" href="image-fixes-v26.css?v=26">',
                   text,
               )
-              if "image-fixes-v25.css" not in text:
+              if "image-fixes-v26.css" not in text:
                   text = text.replace(
                       "</head>",
-                      '<link rel="stylesheet" href="image-fixes-v25.css?v=25"></head>',
+                      '<link rel="stylesheet" href="image-fixes-v26.css?v=26"></head>',
                       1,
                   )
               text = re.sub(
                   r'script(?:-v\d+)?\.js(?:\?v=\d+)?',
-                  'script.js?v=25',
+                  'script.js?v=26',
                   text,
               )
               path.write_text(text, encoding="utf-8")
 
+          # Home: show launch price without hiding hardcover price, then explain upgrade credit.
           index = Path("index.html")
           text = index.read_text(encoding="utf-8")
           text = text.replace(
-              '<span class="eyebrow">✨ 아이와 가족의 이야기를 책으로</span>',
-              '<span class="eyebrow">✨ 사진 한 장으로 시작하는 우리 아이 책</span>',
+              '<div class="hero-price-row"><b>eBook 18,900원</b><i>·</i><b>하드커버 45,900원부터</b></div><small>맞춤 표지와 예시 2페이지는 먼저 확인 · 최종 판매가와 무료배송 여부는 오픈 전 확정</small>',
+              '<div class="hero-price-row"><b>eBook 오픈가 15,900원</b><i>·</i><b>하드커버 45,900원부터</b></div><small>eBook 정상가 18,900원 · 오픈 기념 첫 30건 예정 · 하드커버 업그레이드 시 실제 eBook 결제금액 전액 차감</small>',
+              1,
+          )
+          marker = '</div><div class="hero-meta"><span><i>✓</i> 하드커버 실물 제작</span>'
+          if 'class="upgrade-mini"' not in text and marker in text:
+              text = text.replace(
+                  marker,
+                  '</div><div class="upgrade-mini"><strong>eBook으로 먼저 구매해도 손해 없어요.</strong><span>구매 후 60일 이내 같은 이야기의 하드커버 1권으로 업그레이드하면 실제 결제한 eBook 금액을 전액 빼드립니다.</span></div><div class="hero-meta"><span><i>✓</i> 하드커버 실물 제작</span>',
+                  1,
+              )
+          text = text.replace(
+              '<div class="preview-flow-item"><em>03</em><b>상품 선택·결제</b><small>전자책 또는 하드커버 책 중 원하는 구성을 고릅니다.</small></div>',
+              '<div class="preview-flow-item"><em>03</em><b>상품 선택·결제</b><small>eBook 15,900원부터 시작하거나 하드커버를 바로 선택해요.</small></div>',
               1,
           )
           text = text.replace(
-              '<p class="lead">이름만 바꾸는 책이 아닙니다. 아이의 성격, 좋아하는 것, 가족의 관계와 실제 순간을 담아 동화와 성장 이야기로 만듭니다.</p>',
-              '<p class="lead">아이 사진으로 맞춤 표지와 예시 2페이지를 먼저 확인하세요. 마음에 들면 전자책 또는 하드커버 실물책으로 전체 이야기를 완성합니다.</p>',
-              1,
-          )
-          old_actions = '<div class="hero-actions"><a class="btn btn-primary" href="products.html">책 구성과 예상 가격 보기 →</a><a class="btn btn-soft" href="apply.html">미리보기 신청 준비하기</a></div>'
-          new_actions = '<div class="hero-actions"><a class="btn btn-primary" href="apply.html?mode=preview">무료 미리보기 신청하기 <span class="hero-free-label">결제 전</span></a><a class="btn btn-soft" href="products.html#formats">가격과 구성 보기</a></div><div class="hero-price-summary"><strong>전체 책은 미리보기 확인 후 선택</strong><div class="hero-price-row"><b>eBook 18,900원</b><i>·</i><b>하드커버 45,900원부터</b></div><small>맞춤 표지와 예시 2페이지는 먼저 확인 · 최종 판매가와 무료배송 여부는 오픈 전 확정</small></div>'
-          text = text.replace(old_actions, new_actions, 1)
-          text = text.replace(
-              '<div class="preview-flow-head"><strong>처음부터 결제하지 않아도 괜찮아요.</strong><span>아이 사진으로 표지와 예시 2페이지를 먼저 확인한 뒤 전체 제작을 선택하는 방식으로 준비하고 있습니다.</span></div>',
-              '<div class="preview-flow-head"><strong>우리 아이가 책 속에 들어간 모습부터 무료로 확인해보세요.</strong><span>맞춤 표지와 예시 2페이지를 보고 마음에 들 때만 전체 전자책 또는 하드커버 제작을 선택합니다.</span></div>',
-              1,
-          )
-          text = text.replace(
-              '<a class="btn btn-sky" href="products.html">상품 구성 자세히 보기</a>',
-              '<a class="btn btn-sky" href="apply.html?mode=preview">무료 미리보기 신청하기</a>',
+              '<div class="preview-flow-item"><em>04</em><b>전체 책 제작</b><small>나머지 장면을 완성하고 최종 확인 후 전달합니다.</small></div>',
+              '<div class="preview-flow-item"><em>04</em><b>완성 또는 업그레이드</b><small>eBook 구매 후 60일 안에 실물책으로 바꿔도 결제금액을 차감해요.</small></div>',
               1,
           )
           index.write_text(text, encoding="utf-8")
 
+          # Products: launch sale, exact additional payments, and conditions.
+          products = Path("products.html")
+          text = products.read_text(encoding="utf-8")
+          text = text.replace(
+              '<div class="offer-price-label">예상 출시가</div><div class="offer-price">18,900원</div><ul class="offer-list"><li>전체 이야기 PDF 제공</li><li>휴대폰·태블릿 열람</li><li>인쇄·배송비 없음</li><li>개인 소장용 파일</li></ul>',
+              '<div class="offer-price-label">오픈 기념 예상가</div><div class="offer-price sale-price"><del>18,900원</del><strong>15,900원</strong><span class="sale-chip">첫 30건 예정</span></div><div class="launch-note">오픈 기간 이후 정상가 18,900원 예정</div><div class="credit-note"><b>나중에 하드커버로 바꿔도 손해 없음</b>60일 이내 업그레이드 시 실제 eBook 결제금액 전액 차감</div><ul class="offer-list"><li>전체 이야기 PDF 제공</li><li>휴대폰·태블릿 열람</li><li>인쇄·배송비 없음</li><li>개인 소장용 파일</li></ul>',
+              1,
+          )
+          upgrade = '''<section class="section upgrade-section"><div class="container"><div class="upgrade-box"><div class="upgrade-copy"><span class="eyebrow">eBook → 하드커버 업그레이드</span><h2>먼저 화면으로 만나보고,<br>간직하고 싶을 때 책으로.</h2><p>eBook을 먼저 구매한 뒤 실물책이 갖고 싶어져도 이중으로 결제하지 않습니다. 같은 이야기의 하드커버 1권으로 업그레이드할 때 실제 eBook 결제금액을 전액 차감합니다.</p><div class="upgrade-rule">구매 후 60일 이내 · 동일한 이야기 · 실물책 1권 · 1회 적용 · 내용이나 인물 변경, 추가 제작은 별도 비용</div></div><div><div class="upgrade-prices"><article class="upgrade-price-card"><div><b>24페이지 하드커버로 업그레이드</b><small>45,900원 − eBook 오픈가 15,900원</small></div><strong>추가 30,000원</strong></article><article class="upgrade-price-card featured"><div><b>32페이지 하드커버로 업그레이드</b><small>49,900원 − eBook 오픈가 15,900원</small></div><strong>추가 34,000원</strong></article></div><div class="upgrade-equation">결국 처음부터 하드커버를 산 것과 같은 총금액이에요.</div></div></div></div></section>'''
+          story_marker = '<section class="section white"><div class="container"><div class="head center"><span class="eyebrow">이야기 선택</span>'
+          if 'eBook → 하드커버 업그레이드' not in text and story_marker in text:
+              text = text.replace(story_marker, upgrade + story_marker, 1)
+          text = text.replace(
+              '※ 최종 가격과 무료배송 여부는 1권 샘플 인쇄·포장·배송 견적 확인 후 확정됩니다.',
+              '※ 오픈가는 첫 30건을 기준으로 검토 중입니다. 최종 가격, 무료배송 여부와 업그레이드 적용 방식은 샘플 인쇄·결제 시스템 확인 후 확정됩니다.',
+              1,
+          )
+          products.write_text(text, encoding="utf-8")
+
+          # Apply: show the discounted entry price and upgrade promise in the form.
           apply = Path("apply.html")
           text = apply.read_text(encoding="utf-8")
-          text = text.replace('<title>제작 신청 | 아둘빠 책방</title>', '<title>무료 미리보기 신청 | 아둘빠 책방</title>', 1)
-          text = text.replace('<span class="eyebrow">제작 신청 시안</span>', '<span class="eyebrow">무료 미리보기 신청 시안</span>', 1)
           text = text.replace(
-              '<h1>어렵게 쓰지 않아도 괜찮아요.<br>아이 이야기는 함께 찾아갑니다.</h1><p>현재는 브랜드 준비 단계의 신청 시안입니다. 입력 내용은 서버로 전송되지 않으며 사진 업로드도 아직 연결하지 않았습니다.</p>',
-              '<h1>우리 아이가 책 속에 들어간 모습,<br>먼저 확인해보세요.</h1><p>사진과 기본 정보를 바탕으로 맞춤 표지와 예시 2페이지를 먼저 보여드리는 신청 화면입니다. 현재는 브랜드 준비 단계라 입력 내용과 사진이 실제로 전송되지는 않습니다.</p><div class="preview-promise"><div class="preview-promise-main"><strong>결제 전 무료 미리보기</strong><span>맞춤 표지와 예시 2페이지를 먼저 확인한 뒤 전체 제작 여부를 결정합니다.</span></div><div class="preview-promise-price"><strong>전체 제작 예상가</strong><span>가격을 숨기지 않고 미리 안내합니다.</span><b>eBook 18,900원 · 하드커버 45,900원부터</b></div></div>',
-              1,
+              '<b>eBook 18,900원 · 하드커버 45,900원부터</b>',
+              '<b>eBook 오픈가 15,900원 · 하드커버 45,900원부터</b>',
           )
           text = text.replace(
-              '<h2>먼저 만들고 싶은 책을 골라주세요.</h2><p>선택한 책에 따라 상담할 내용이 달라집니다.</p>',
-              '<h2>무료 미리보기에 필요한 내용만 알려주세요.</h2><p>표지와 예시 장면을 만들기 위한 기본 정보입니다.</p>',
-              1,
+              '미리보기 확인 후 eBook 18,900원, 24페이지 하드커버 45,900원, 32페이지 하드커버 49,900원 중 선택하는 흐름으로 준비 중입니다.',
+              '미리보기 확인 후 eBook 오픈가 15,900원, 24페이지 하드커버 45,900원, 32페이지 하드커버 49,900원 중 선택합니다. eBook 구매 뒤 60일 이내 실물책으로 업그레이드하면 실제 결제금액을 전액 차감하는 방식으로 준비 중입니다.',
           )
-          marker = '<div class="field"><label for="storyType">이야기 제작 방식</label><select id="storyType" name="storyType"><option value="">선택해주세요</option><option>준비된 이야기형</option><option>새 스토리 제작형</option><option>실제 사진·기록형</option></select></div>'
-          addition = marker + '<div class="format-choice-note"><b>지금은 결제하지 않습니다.</b> 미리보기 확인 후 eBook 18,900원, 24페이지 하드커버 45,900원, 32페이지 하드커버 49,900원 중 선택하는 흐름으로 준비 중입니다.</div><div class="field"><label for="bookFormat">미리 생각해둔 완성 방식</label><select id="bookFormat" name="bookFormat"><option value="">아직 정하지 않았어요</option><option>eBook PDF · 예상 18,900원</option><option>24페이지 하드커버 · 예상 45,900원</option><option>32페이지 하드커버 · 예상 49,900원</option></select></div>'
-          if 'id="bookFormat"' not in text:
-              text = text.replace(marker, addition, 1)
-          text = text.replace('신청 내용 미리 확인하기', '무료 미리보기 신청 내용 확인하기', 1)
+          text = text.replace(
+              '<option>eBook PDF · 예상 18,900원</option>',
+              '<option>eBook PDF · 오픈가 예상 15,900원</option>',
+          )
           apply.write_text(text, encoding="utf-8")
+
+          # Guide: make the credit policy easy to find and avoid misunderstandings.
+          guide = Path("guide.html")
+          text = guide.read_text(encoding="utf-8")
+          price_faq = '<details><summary>가격은 확정됐나요?</summary><p>현재 인쇄·제본 견적과 구성을 테스트 중이며 오픈 전 확정 가격과 포함 범위를 안내할 예정입니다.</p></details>'
+          replacement = '<details><summary>eBook을 산 뒤 하드커버로 바꿀 수 있나요?</summary><p>구매 후 60일 이내 같은 이야기의 하드커버 1권으로 업그레이드하면 실제로 결제한 eBook 금액을 전액 차감하는 방식으로 준비 중입니다. 내용 변경이나 추가 제작은 별도 비용이 발생할 수 있습니다.</p></details><details><summary>eBook 오픈가는 얼마인가요?</summary><p>정상가 18,900원, 오픈 기념 첫 30건은 15,900원을 검토 중입니다. 수량과 기간은 정식 오픈 전에 최종 안내합니다.</p></details>' + price_faq
+          if 'eBook을 산 뒤 하드커버로 바꿀 수 있나요?' not in text:
+              text = text.replace(price_faq, replacement, 1)
+          faq_end = '</div></div></section></main>'
+          if 'faq-policy-note' not in text and faq_end in text:
+              text = text.replace(
+                  faq_end,
+                  '</div><div class="faq-policy-note"><b>업그레이드 차감 기준</b><br>할인 여부와 관계없이 고객이 실제 결제한 eBook 금액을 차감합니다. 오픈가 15,900원에 구매했다면 15,900원, 정상가 18,900원에 구매했다면 18,900원이 차감됩니다.</div></div></section></main>',
+                  1,
+              )
+          guide.write_text(text, encoding="utf-8")
           PY
 
-      - name: Commit transparent preview pricing
+      - name: Commit eBook launch price and upgrade credit
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add image-fixes-v25.css index.html products.html stories.html themes.html guide.html apply.html
-          git commit -m "Add free preview CTA with transparent prices [site-v25]" || exit 0
+          git add image-fixes-v26.css index.html products.html stories.html themes.html guide.html apply.html
+          git commit -m "Add eBook launch price and hardcover upgrade credit [site-v26]" || exit 0
           git push origin main
