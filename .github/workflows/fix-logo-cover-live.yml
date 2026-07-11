@@ -1,0 +1,105 @@
+name: Fix live logo and Rubiya cover
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-logo-cover-live.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Replace cached and broken assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          version = '12'
+          html_files = ['index.html', 'products.html', 'stories.html', 'themes.html', 'guide.html', 'apply.html']
+
+          brand_html = (
+              '<a class="brand" href="index.html" aria-label="아둘빠 책방 홈">'
+              '<img class="combined-header-logo" src="assets/logo-base.svg?v=' + version + '" '
+              'alt="아둘빠 책방 — 아들 둘 아빠가 시작한 우리 아이 이야기">'
+              '</a><nav class="navlinks">'
+          )
+
+          for name in html_files:
+              path = Path(name)
+              text = path.read_text(encoding='utf-8')
+              text = re.sub(r'href="styles\.css(?:\?v=\d+)?"', f'href="styles.css?v={version}"', text)
+              text = re.sub(r'src="script\.js(?:\?v=\d+)?"', f'src="script.js?v={version}"', text)
+              text = re.sub(
+                  r'<a class="brand" href="index\.html"(?: aria-label="[^"]*")?>.*?</a><nav class="navlinks">',
+                  brand_html,
+                  text,
+                  count=1,
+                  flags=re.S,
+              )
+
+              if name == 'index.html':
+                  text = re.sub(
+                      r'<svg class="book-cover".*?</svg>',
+                      '<img class="book-cover real-book-cover" src="assets/sample-book-rubiya-cover.svg?v=' + version + '" alt="루비야, 동화 속으로 데려다줘 책 표지">',
+                      text,
+                      count=1,
+                      flags=re.S,
+                  )
+
+              if name == 'stories.html':
+                  text = re.sub(
+                      r'<div class="case-art(?: story-cover-art)?">.*?</div>',
+                      '<div class="case-art story-cover-art"><img class="story-cover-image" src="assets/sample-book-rubiya-cover.svg?v=' + version + '" alt="루비야, 동화 속으로 데려다줘 실제 표지"></div>',
+                      text,
+                      count=1,
+                      flags=re.S,
+                  )
+
+              path.write_text(text, encoding='utf-8')
+
+          script = Path('script.js')
+          js = script.read_text(encoding='utf-8')
+          js = re.sub(r"mobile-fixes\.css(?:\?v=\d+)?", f"mobile-fixes.css?v={version}", js)
+          js = re.sub(r"assets/logo-(?:header|base)\.svg(?:\?v=\d+)?", f"assets/logo-base.svg?v={version}", js)
+          js = re.sub(r"assets/(?:rubiya-cover-final|sample-book-rubiya-cover)\.svg(?:\?v=\d+)?", f"assets/sample-book-rubiya-cover.svg?v={version}", js)
+          script.write_text(js, encoding='utf-8')
+
+          css = Path('mobile-fixes.css')
+          mobile = css.read_text(encoding='utf-8')
+          mobile = re.sub(
+              r'\.combined-header-logo\{[^}]*\}',
+              '.combined-header-logo{display:block;width:min(360px,42vw);height:auto;max-height:70px;object-fit:contain}',
+              mobile,
+              count=1,
+          )
+          mobile = mobile.replace(
+              '@media(max-width:1180px){.combined-header-logo{max-width:270px;height:62px}}',
+              '@media(max-width:1180px){.combined-header-logo{width:270px;max-width:38vw;height:auto}}'
+          )
+          mobile = mobile.replace(
+              '@media(max-width:980px){.nav{height:82px}.combined-header-logo{height:65px;max-width:235px}}',
+              '@media(max-width:980px){.nav{height:82px}.combined-header-logo{width:235px;max-width:calc(100vw - 100px);height:auto}}'
+          )
+          mobile = mobile.replace(
+              '.combined-header-logo{height:66px;max-width:220px}',
+              '.combined-header-logo{width:220px;max-width:calc(100vw - 96px);height:auto}'
+          )
+          css.write_text(mobile, encoding='utf-8')
+          PY
+
+      - name: Commit repaired live assets
+        run: |
+          rm -f .github/workflows/fix-logo-cover-live.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html products.html stories.html themes.html guide.html apply.html script.js mobile-fixes.css .github/workflows/fix-logo-cover-live.yml
+          git commit -m "Fix live logo and Rubiya cover with cache bust [skip ci]"
+          git push
