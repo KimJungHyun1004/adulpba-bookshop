@@ -1,9 +1,11 @@
 h1,h2,h3,.choice strong{word-break:keep-all;overflow-wrap:break-word}
-.official-header-logo{display:block;width:260px;max-width:38vw;height:auto}
-.brand{min-width:260px}
-@media(max-width:980px){.official-header-logo{width:210px;max-width:58vw}.brand{min-width:0}}
+.header-logo-crop{display:block;width:270px;height:70px;overflow:hidden}
+.official-header-logo{display:block;width:270px;height:auto;transform:translateY(-2px)}
+.brand{min-width:270px}
+@media(max-width:980px){.header-logo-crop{width:220px;height:60px}.official-header-logo{width:220px}.brand{min-width:0}}
 @media(max-width:640px){
-  .official-header-logo{width:190px;max-width:62vw}
+  .header-logo-crop{width:205px;height:56px}
+  .official-header-logo{width:205px;transform:translateY(-1px)}
   .page-hero{padding:38px 0 34px}
   .page-hero h1{font-size:1.95rem;line-height:1.24;letter-spacing:-.045em;margin:14px 0 12px}
   .page-hero p{font-size:.91rem;line-height:1.75}
