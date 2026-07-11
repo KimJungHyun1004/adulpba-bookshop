@@ -1,0 +1,19 @@
+@import url("image-fixes-v26.css?v=26");
+
+.product-hero-title .mobile-title{display:none}
+.product-hero-title .desktop-title{display:block}
+.page-hero .product-hero-title{max-width:980px;text-wrap:balance;word-break:keep-all}
+.page-hero .product-hero-copy{word-break:keep-all;max-width:760px}
+
+.ebook-credit-banner{margin-top:18px;padding:16px 18px;border-radius:18px;background:#eaf7ee;border:1px solid #c7e5d1;color:#326849;font-size:.82rem;line-height:1.55}
+.ebook-credit-banner b{display:block;color:#234f38;font-size:.92rem;margin-bottom:3px}
+
+@media(max-width:640px){
+  .page-hero{padding:44px 0 38px!important}
+  .product-hero-title .desktop-title{display:none}
+  .product-hero-title .mobile-title{display:block}
+  .page-hero .product-hero-title{font-size:clamp(2.08rem,9.2vw,2.32rem)!important;line-height:1.16!important;letter-spacing:-.055em!important;margin:16px 0 17px!important}
+  .product-hero-title .mobile-title span{display:block;white-space:nowrap}
+  .page-hero .product-hero-copy{font-size:.94rem!important;line-height:1.75!important}
+  .product-intro-note{font-size:.82rem!important;line-height:1.7!important;padding:15px!important}
+}
