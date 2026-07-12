@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css?v=12">
   <link rel="stylesheet" href="image-fixes-v30.css?v=30">
   <link rel="stylesheet" href="template-v1.css?v=1">
+  <link rel="stylesheet" href="template-character-v2.css?v=2">
 </head>
 <body class="template-page">
   <div class="notice">🚂 <b>기본형 1호 템플릿 테스트</b> · 결제·사진 업로드 없이 바로 체험</div>
@@ -83,6 +84,15 @@
                 <label class="template-field"><span>상의 색상</span><select id="shirt"><option value="blue" selected>하늘색</option><option value="yellow">노란색</option><option value="green">초록색</option><option value="pink">분홍색</option></select></label>
                 <label class="template-check"><input type="checkbox" id="glasses"><span>안경을 쓴 캐릭터</span></label>
               </div>
+              <div class="character-live-card">
+                <div class="character-live-head"><b>선택한 캐릭터 바로 보기</b><span>입력할 때마다 자동 반영</span></div>
+                <div class="character-live-stage" id="characterLiveStage"><div class="character-live-name" id="characterLiveName">아이 캐릭터 미리보기</div></div>
+                <div class="character-summary" id="characterSummary"></div>
+              </div>
+              <div class="companion-box">
+                <h4>생일열차의 고정 친구들</h4>
+                <p>동물 친구는 기본형의 고정 캐릭터입니다. 토토·루루는 흔한 이름이라 최종 확정 전 별도 후보로 바꿀 예정입니다.</p>
+              </div>
             </div>
 
             <div class="template-form-group">
@@ -150,5 +160,6 @@
   <div class="print-book" id="printBook" aria-hidden="true"></div>
   <script src="script.js?v=30"></script>
   <script src="template-v1.js?v=1"></script>
+  <script src="template-character-v2.js?v=2"></script>
 </body>
 </html>
