@@ -1,4 +1,4 @@
-name: Fix homepage title and clarify four-page preview
+name: Add protected PDF delivery and cancellation flow
 
 on:
   workflow_dispatch:
@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  preview-pages-and-title:
-    if: "!contains(github.event.head_commit.message || '', '[site-v29]')"
+  protected-delivery-flow:
+    if: "!contains(github.event.head_commit.message || '', '[site-v30]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -18,27 +18,63 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Fix nested mobile title wrapping and preview wording
+      - name: Add proof approval and cancellation policy UX
         shell: bash
         run: |
           set -euo pipefail
 
-          cat > image-fixes-v29.css <<'CSS'
-          @import url("image-fixes-v28.css?v=28");
+          cat > image-fixes-v30.css <<'CSS'
+          @import url("image-fixes-v29.css?v=29");
 
-          /* The old selector also turned the highlighted words into a full-width block. */
-          .mobile-title>span{display:block!important;white-space:nowrap!important}
-          .mobile-title span span,
-          .mobile-title .highlight{display:inline-block!important;white-space:nowrap!important;width:auto!important}
+          .preview-flow-grid{grid-template-columns:repeat(5,1fr)!important}
+          .process-grid.v30-flow{grid-template-columns:repeat(3,1fr)}
+          .process-card .step-tag{display:inline-flex;margin-top:auto;padding:5px 8px;border-radius:999px;background:#eef9fd;color:#3e718a;font-size:.68rem;font-weight:900}
 
-          @media(max-width:640px){
-            .hero .sales-title{font-size:clamp(1.95rem,8.15vw,2.2rem)!important;line-height:1.14!important;letter-spacing:-.058em!important}
-            .hero .sales-title .highlight:after{bottom:2px!important;height:13px!important;left:-2px!important;right:-2px!important}
-            .hero .lead{max-width:35rem}
+          .delivery-guard{background:#fffdf7}
+          .delivery-guard-box{display:grid;grid-template-columns:.95fr 1.05fr;gap:26px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:30px;padding:32px;box-shadow:var(--shadow)}
+          .delivery-guard-copy h2{font-size:clamp(2rem,3.6vw,3.2rem);line-height:1.16;letter-spacing:-.055em;margin:15px 0}
+          .delivery-guard-copy p{color:var(--muted);line-height:1.72}
+          .approval-card{background:#f7fbfd;border:1px solid #d8eaf0;border-radius:23px;padding:20px}
+          .approval-card h3{font-size:1.05rem;margin-bottom:13px}
+          .approval-row{display:grid;grid-template-columns:112px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #dce9ee;font-size:.82rem}
+          .approval-row:last-of-type{border-bottom:0}
+          .approval-row b{color:#4f7182}
+          .approval-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+          .approval-actions span{display:inline-flex;padding:9px 12px;border-radius:999px;font-size:.74rem;font-weight:900}
+          .approval-actions .edit{background:#fff;border:1px solid var(--line);color:var(--navy)}
+          .approval-actions .confirm{background:var(--navy);color:#fff}
+
+          .policy-section{background:#eef9fd}
+          .policy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+          .policy-card{position:relative;background:#fff;border:1px solid #dce9ee;border-radius:22px;padding:20px;min-height:220px}
+          .policy-card em{display:inline-flex;font-style:normal;padding:5px 8px;border-radius:999px;background:#eef9fd;color:#39718b;font-size:.68rem;font-weight:950}
+          .policy-card h3{font-size:1.08rem;margin:14px 0 8px}
+          .policy-card p{font-size:.8rem;line-height:1.58;color:var(--muted)}
+          .policy-card strong{display:block;margin-top:12px;font-size:.77rem;color:#315e73}
+          .policy-card.warning{background:#fffaf0;border-color:#ecd9aa}
+          .policy-card.safe{background:#f1fbf4;border-color:#cbe6d3}
+          .policy-note{margin-top:16px;padding:15px 17px;border-radius:17px;background:#fff;border:1px solid #d7e6ec;color:#567483;font-size:.78rem;line-height:1.58}
+
+          .payment-consent-preview{margin:17px 0;padding:18px;border-radius:18px;background:#fffaf0;border:1px solid #ead9ae}
+          .payment-consent-preview h3{font-size:.96rem;margin-bottom:9px}
+          .payment-consent-preview>p{font-size:.78rem;color:#7a6b49;line-height:1.5}
+          .consent-preview-row{display:grid;grid-template-columns:24px 1fr;gap:9px;align-items:start;margin-top:10px;padding-top:10px;border-top:1px solid #eadfbe;font-size:.76rem;line-height:1.52;color:#655b43}
+          .consent-preview-row i{font-style:normal;width:20px;height:20px;border:2px solid #bfae80;border-radius:5px;background:#fff}
+          .free-preview-safe{margin:14px 0;padding:13px 15px;border-radius:15px;background:#eaf7ee;color:#326849;font-size:.78rem;line-height:1.5}
+          .free-preview-safe b{display:block;margin-bottom:2px}
+
+          @media(max-width:980px){
+            .preview-flow-grid{grid-template-columns:repeat(2,1fr)!important}
+            .process-grid.v30-flow{grid-template-columns:repeat(2,1fr)}
+            .delivery-guard-box{grid-template-columns:1fr}
+            .policy-grid{grid-template-columns:repeat(2,1fr)}
           }
 
-          @media(max-width:370px){
-            .hero .sales-title{font-size:1.88rem!important;letter-spacing:-.062em!important}
+          @media(max-width:640px){
+            .preview-flow-grid,.process-grid.v30-flow,.policy-grid{grid-template-columns:1fr!important}
+            .delivery-guard-box{padding:21px;border-radius:23px}
+            .approval-row{grid-template-columns:1fr;gap:2px}
+            .policy-card{min-height:auto}
           }
           CSS
 
@@ -47,59 +83,83 @@ jobs:
           import re
 
           pages = ["index.html", "products.html", "stories.html", "themes.html", "guide.html", "apply.html"]
-
           for name in pages:
               path = Path(name)
               text = path.read_text(encoding="utf-8")
-              text = re.sub(
-                  r'<link rel="stylesheet" href="image-fixes-v\d+\.css\?v=\d+">',
-                  '<link rel="stylesheet" href="image-fixes-v29.css?v=29">',
-                  text,
-              )
-              if "image-fixes-v29.css" not in text:
-                  text = text.replace(
-                      "</head>",
-                      '<link rel="stylesheet" href="image-fixes-v29.css?v=29"></head>',
-                      1,
-                  )
-              text = re.sub(
-                  r'script(?:-v\d+)?\.js(?:\?v=\d+)?',
-                  'script.js?v=29',
-                  text,
-              )
-
-              # Use book-accurate wording: one spread is two pages; two spreads are four pages.
-              replacements = {
-                  '표지와 예시 2페이지 무료 확인': '표지 + 본문 2장면 무료 확인',
-                  '맞춤 표지 + 예시 2페이지 · 결제 전': '맞춤 표지 + 본문 2장면(총 4페이지) · 결제 전',
-                  '맞춤 표지와 예시 2페이지': '맞춤 표지와 본문 2장면(총 4페이지)',
-                  '표지와 예시 2페이지': '표지와 본문 2장면(총 4페이지)',
-                  '예시 2페이지': '본문 2장면(총 4페이지)',
-              }
-              for old, new in replacements.items():
-                  text = text.replace(old, new)
-
+              text = re.sub(r'<link rel="stylesheet" href="image-fixes-v\d+\.css\?v=\d+">', '<link rel="stylesheet" href="image-fixes-v30.css?v=30">', text)
+              if "image-fixes-v30.css" not in text:
+                  text = text.replace("</head>", '<link rel="stylesheet" href="image-fixes-v30.css?v=30"></head>', 1)
+              text = re.sub(r'script(?:-v\d+)?\.js(?:\?v=\d+)?', 'script.js?v=30', text)
+              text = text.replace('본문 2장면(총 4페이지)를', '본문 2장면(총 4페이지)을')
+              text = text.replace('본문 2장면(총 4페이지)로', '본문 2장면(총 4페이지)으로')
               path.write_text(text, encoding="utf-8")
 
-          # Keep the top strip compact on mobile.
-          for name in pages:
-              path = Path(name)
-              text = path.read_text(encoding="utf-8")
-              text = re.sub(
-                  r'<div class="notice">.*?</div><header>',
-                  '<div class="notice">📚 <b>표지 + 본문 2장면 무료 확인</b> · eBook 오픈가 15,900원</div><header>',
-                  text,
-                  count=1,
-              )
-              path.write_text(text, encoding="utf-8")
+          # Home: make the post-payment protection flow visible before purchase.
+          index = Path("index.html")
+          text = index.read_text(encoding="utf-8")
+          old_flow = re.search(r'<div class="preview-flow-grid">.*?</div></div></section>', text, flags=re.S)
+          if old_flow:
+              new_flow = '''<div class="preview-flow-grid"><div class="preview-flow-item"><em>01</em><b>사진과 정보 접수</b><small>아이 사진, 이름, 나이와 좋아하는 것을 알려주세요.</small></div><div class="preview-flow-item"><em>02</em><b>무료 미리보기</b><small>맞춤 표지와 본문 2장면, 총 4페이지를 먼저 확인해요.</small></div><div class="preview-flow-item"><em>03</em><b>상품 선택·결제</b><small>eBook 또는 하드커버 중 원하는 구성을 고릅니다.</small></div><div class="preview-flow-item"><em>04</em><b>전체 시안 확인</b><small>워터마크가 적용된 전체 책으로 이름과 내용을 확인해요.</small></div><div class="preview-flow-item"><em>05</em><b>최종 승인·전달</b><small>승인 후 원본 PDF를 받고, 실물책은 인쇄를 시작합니다.</small></div></div></div></section>'''
+              text = text[:old_flow.start()] + new_flow + text[old_flow.end():]
+          text = text.replace('<strong>전체 책은 미리보기 확인 후 선택</strong>', '<strong>무료 미리보기 → 전체 시안 → 최종 승인 순서</strong>', 1)
+          index.write_text(text, encoding="utf-8")
+
+          # Products: replace the simple four-step flow with the protected six-step flow.
+          products = Path("products.html")
+          text = products.read_text(encoding="utf-8")
+          start = text.find('<section class="section white"><div class="container"><div class="head center"><span class="eyebrow">제작 흐름</span>')
+          end = text.find('<section class="section blue" id="formats">')
+          if start != -1 and end != -1:
+              protected_flow = '''<section class="section white"><div class="container"><div class="head center"><span class="eyebrow">안전한 제작 흐름</span><h2>원본 PDF를 바로 보내지 않고, 확인 단계를 한 번 더 둡니다.</h2><p>결제 전에는 무료 미리보기, 결제 후에는 워터마크 전체 시안을 확인한 뒤 고객 승인 후 원본을 전달합니다.</p></div><div class="process-grid v30-flow"><article class="process-card"><em>STEP 01</em><div class="process-icon">📷</div><h3>사진과 기본정보</h3><p>아이 사진 1~3장, 이름, 나이와 원하는 테마를 받습니다.</p><span class="step-tag">결제 전</span></article><article class="process-card"><em>STEP 02</em><div class="process-icon">✨</div><h3>무료 미리보기</h3><p>맞춤 표지와 본문 2장면, 총 4페이지를 먼저 확인합니다.</p><span class="step-tag">결제 전</span></article><article class="process-card"><em>STEP 03</em><div class="process-icon">💳</div><h3>상품 선택·결제</h3><p>제작 범위와 취소 기준을 확인한 뒤 eBook 또는 하드커버를 선택합니다.</p><span class="step-tag">제작 시작 전 확인</span></article><article class="process-card"><em>STEP 04</em><div class="process-icon">🪄</div><h3>전체 책 제작</h3><p>나머지 페이지를 제작해 워터마크가 적용된 전체 시안을 준비합니다.</p><span class="step-tag">원본 미제공</span></article><article class="process-card"><em>STEP 05</em><div class="process-icon">✅</div><h3>최종 확인</h3><p>이름, 제목, 페이지 누락과 주문 내용을 확인하고 최종 승인을 받습니다.</p><span class="step-tag">승인 전 수정</span></article><article class="process-card"><em>STEP 06</em><div class="process-icon">📚</div><h3>원본 전달·인쇄</h3><p>승인 후 고해상도 PDF를 전달하고, 하드커버는 인쇄를 시작합니다.</p><span class="step-tag">콘텐츠 제공 시작</span></article></div></div></section>'''
+              text = text[:start] + protected_flow + text[end:]
+
+          text = text.replace('<li>전체 이야기 PDF 제공</li>', '<li>워터마크 전체 시안 확인 후 원본 PDF 제공</li>', 1)
+
+          guard = '''<section class="section delivery-guard"><div class="container"><div class="delivery-guard-box"><div class="delivery-guard-copy"><span class="eyebrow">원본 전달 전 마지막 확인</span><h2>저장 가능한 PDF는<br>최종 승인 뒤에 전달합니다.</h2><p>고객은 전체 내용을 확인할 수 있고, 판매자는 원본 전달 뒤 단순 변심 취소 위험을 줄일 수 있도록 단계가 나뉩니다. 이름이나 주문 내용이 다르면 승인 전에 바로 수정합니다.</p><a class="btn btn-primary" href="guide.html#refund-policy">제작·취소 기준 보기</a></div><div class="approval-card"><h3>최종 제작 확인서 예시</h3><div class="approval-row"><b>아이 이름</b><span>김다훈</span></div><div class="approval-row"><b>책 제목</b><span>루비야, 동화 속으로 데려다줘</span></div><div class="approval-row"><b>구성</b><span>32페이지 eBook PDF</span></div><div class="approval-row"><b>확인 항목</b><span>이름 · 페이지 누락 · 주문 내용 · 오탈자</span></div><div class="approval-row"><b>전달 방식</b><span>최종 승인 후 고해상도 원본 PDF</span></div><div class="approval-actions"><span class="edit">수정 내용 전달</span><span class="confirm">최종 제작 승인</span></div></div></div></div></section>'''
+          marker = '<section class="section upgrade-section">'
+          if '원본 전달 전 마지막 확인' not in text and marker in text:
+              text = text.replace(marker, guard + marker, 1)
+          products.write_text(text, encoding="utf-8")
+
+          # Guide: update timing and add a clear staged cancellation section.
+          guide = Path("guide.html")
+          text = guide.read_text(encoding="utf-8")
+          text = text.replace('<h2>사진 접수부터 배송까지 다섯 단계</h2>', '<h2>미리보기부터 원본 전달까지 여섯 단계</h2>')
+          steps_start = text.find('<div class="steps"><article class="step"><em>STEP 01</em>')
+          steps_end = text.find('</div></div></section><section class="section blue">', steps_start)
+          if steps_start != -1 and steps_end != -1:
+              six_steps = '''<div class="steps"><article class="step"><em>STEP 01</em><h3>간단 정보 접수</h3><p>사진 1~3장, 이름, 나이와 좋아하는 것을 알려주세요.</p></article><article class="step"><em>STEP 02</em><h3>무료 미리보기</h3><p>맞춤 표지와 본문 2장면, 총 4페이지로 분위기를 확인합니다.</p></article><article class="step"><em>STEP 03</em><h3>상품 선택·결제</h3><p>가격, 제작 범위와 취소 기준을 확인한 뒤 상품을 선택합니다.</p></article><article class="step"><em>STEP 04</em><h3>전체 시안 제작</h3><p>맞춤 PDF는 결제 후 약 1~2영업일을 목표로 준비합니다.</p></article><article class="step"><em>STEP 05</em><h3>최종 승인</h3><p>워터마크 전체 시안으로 이름과 주문 내용을 확인합니다.</p></article><article class="step"><em>STEP 06</em><h3>원본·실물 전달</h3><p>승인 후 원본 PDF를 전달하고, 인쇄·제본은 약 1~2영업일 후 배송합니다.</p></article></div>'''
+              text = text[:steps_start] + six_steps + text[steps_end+6:]
+
+          text = text.replace('<li>초기 제작 기간 10~20일 예상</li>', '<li>맞춤 PDF 제작 약 1~2영업일 예정</li><li>인쇄·제본 약 1~2영업일 + 배송</li>')
+
+          policy = '''<section class="section policy-section" id="refund-policy"><div class="container"><div class="head center"><span class="eyebrow">제작·취소 기준</span><h2>PDF를 받은 뒤의 분쟁을 줄이도록 단계별로 안내합니다.</h2><p>아래는 오픈 준비용 운영 기준입니다. 정식 판매 전 결제수단과 약관을 확인해 최종 확정합니다.</p></div><div class="policy-grid"><article class="policy-card safe"><em>01 · 결제 전</em><h3>무료 미리보기 단계</h3><p>표지와 본문 2장면을 확인하는 단계로 결제와 원본 파일 제공이 없습니다.</p><strong>진행하지 않아도 비용 없음</strong></article><article class="policy-card"><em>02 · 결제 후</em><h3>개별 제작 시작</h3><p>아이 정보에 맞춰 전체 책 제작이 시작됩니다. 제작 시작과 취소 제한 가능성을 결제 전에 별도로 확인합니다.</p><strong>세부 기준은 정식 오픈 전 확정</strong></article><article class="policy-card"><em>03 · 승인 전</em><h3>워터마크 전체 시안</h3><p>원본을 받기 전에 전체 페이지와 주문 내용을 확인합니다. 판매자 오류, 이름 오기재와 페이지 누락은 수정합니다.</p><strong>원본 PDF는 아직 미제공</strong></article><article class="policy-card warning"><em>04 · 승인 후</em><h3>원본 PDF 제공·인쇄 시작</h3><p>고객 승인 후 저장 가능한 원본 PDF를 제공하고 실물책 인쇄를 시작합니다. 이후 단순 변심에 따른 취소·환불은 제한될 수 있습니다.</p><strong>하자·주문 불일치는 수정 또는 재처리</strong></article></div><div class="policy-note">맞춤형 디지털콘텐츠라고 해서 모든 환불 책임이 없어지는 것은 아닙니다. 실제 주문 내용과 다르거나 파일이 열리지 않는 등 하자가 있는 경우에는 확인 후 수정·재전송 또는 필요한 조치를 진행합니다.</div></div></section>'''
+          faq_marker = '<section class="section white"><div class="container"><div class="head center"><span class="eyebrow">자주 묻는 질문</span>'
+          if 'id="refund-policy"' not in text and faq_marker in text:
+              text = text.replace(faq_marker, policy + faq_marker, 1)
+
+          refund_faq = '<details><summary>PDF를 받은 뒤 단순 변심으로 취소할 수 있나요?</summary><p>무료 미리보기와 워터마크 전체 시안을 충분히 확인하고 최종 승인한 뒤 원본 PDF를 제공합니다. 원본 제공 이후에는 맞춤형 디지털 파일의 특성상 단순 변심에 따른 취소·환불이 제한될 수 있습니다. 다만 파일 하자나 주문 내용과 다른 부분은 확인 후 수정하거나 필요한 조치를 진행합니다.</p></details>'
+          if 'PDF를 받은 뒤 단순 변심' not in text:
+              text = text.replace('</div><div class="faq-policy-note">', refund_faq + '</div><div class="faq-policy-note">', 1)
+          guide.write_text(text, encoding="utf-8")
+
+          # Apply: clarify that free preview has no payment, and preview the separate payment consents.
+          apply = Path("apply.html")
+          text = apply.read_text(encoding="utf-8")
+          text = text.replace('<div class="form-trust-note"><i>💡</i>', '<div class="free-preview-safe"><b>지금 단계는 무료 신청입니다.</b>결제도 원본 PDF 제공도 없으며, 미리보기를 본 뒤 제작하지 않아도 비용이 발생하지 않습니다.</div><div class="form-trust-note"><i>💡</i>', 1)
+          consent = '''<div class="payment-consent-preview"><h3>정식 결제 단계에서 별도로 확인할 내용</h3><p>무료 신청 단계에서는 체크하지 않습니다. 실제 결제가 연결되면 아래 내용을 일반 약관과 분리해 확인받을 예정입니다.</p><div class="consent-preview-row"><i></i><span>아이의 이름·사진·정보를 반영한 맞춤형 콘텐츠이며, 결제 후 개별 제작이 시작된다는 내용을 확인했습니다.</span></div><div class="consent-preview-row"><i></i><span>최종 승인 후 고해상도 원본 PDF가 제공되면 디지털콘텐츠 제공이 시작되며, 이후 단순 변심 취소가 제한될 수 있음을 확인했습니다.</span></div><div class="consent-preview-row"><i></i><span>파일 하자, 페이지 누락 또는 주문 내용과 다른 부분은 확인 후 수정·재전송 등의 처리를 받을 수 있습니다.</span></div></div>'''
+          agree_marker = '<label class="agree"><input type="checkbox" required>'
+          if 'class="payment-consent-preview"' not in text and agree_marker in text:
+              text = text.replace(agree_marker, consent + agree_marker, 1)
+          apply.write_text(text, encoding="utf-8")
           PY
 
-      - name: Commit title and preview page wording
+      - name: Commit protected delivery flow
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add image-fixes-v29.css index.html products.html stories.html themes.html guide.html apply.html
-          git commit -m "Fix mobile hero wrapping and label preview as four pages [site-v29]" || exit 0
+          git add image-fixes-v30.css index.html products.html stories.html themes.html guide.html apply.html
+          git commit -m "Add protected PDF approval and cancellation flow [site-v30]" || exit 0
           git push origin main
