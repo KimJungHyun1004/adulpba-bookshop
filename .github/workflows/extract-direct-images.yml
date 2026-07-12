@@ -1,4 +1,4 @@
-name: Connect birthday template to site
+name: Finalize template builder wording
 
 on:
   workflow_dispatch:
@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  connect-template:
-    if: "!contains(github.event.head_commit.message || '', '[site-v31]')"
+  finalize-builder:
+    if: "!contains(github.event.head_commit.message || '', '[site-v33]')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -18,46 +18,36 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Add template links and homepage launch card
+      - name: Apply companion names and cache bust
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
 
-          pages = ["index.html", "products.html", "stories.html", "themes.html", "guide.html", "apply.html"]
-          for name in pages:
-              path = Path(name)
-              text = path.read_text(encoding="utf-8")
-              old = '<a href="products.html">책 만들기</a><a href="stories.html">제작 사례</a>'
-              new = '<a href="products.html">책 만들기</a><a href="template.html">기본형 만들기</a><a href="stories.html">제작 사례</a>'
-              if 'href="template.html">기본형 만들기</a>' not in text:
-                  text = text.replace(old, new, 1)
-              path.write_text(text, encoding="utf-8")
-
-          index = Path("index.html")
-          text = index.read_text(encoding="utf-8")
-          marker = '<section class="section conversion-proof">'
-          block = '''<section class="section white"><div class="container"><div class="head center"><span class="eyebrow">기본형 1호 테스트</span><h2>이름과 몇 가지 선택만으로<br>생일열차 동화를 만들어보세요.</h2><p>현재는 결제 없이 작동 방식을 확인하는 테스트 버전입니다. 이름, 생일 표현, 좋아하는 세계와 마지막 메시지를 바꾸면 표지와 내지 24페이지가 즉시 달라집니다.</p></div><div class="cta-band"><div><span class="eyebrow">《○○에게 도착한 생일열차》</span><h2 style="font-size:clamp(2rem,3.6vw,3.2rem);line-height:1.15;letter-spacing:-.05em;margin:17px 0">우리 아이 이름으로<br>바로 만들어보는 기본형</h2><p>API 없이 고정 템플릿을 조합해 미리보기를 만들고, 브라우저의 PDF 저장 기능도 테스트할 수 있습니다.</p><a class="btn btn-sky" href="template.html">기본형 템플릿 체험하기</a></div><div class="slots"><div class="slot open"><strong>01 · 정보 선택</strong><small>이름·생일·테마·선물·메시지</small></div><div class="slot open"><strong>02 · 즉시 미리보기</strong><small>표지와 내지 24페이지 자동 반영</small></div><div class="slot open"><strong>03 · PDF 저장 테스트</strong><small>현재는 워터마크 기능 검증본</small></div></div></div></div></section>'''
-          if '기본형 1호 테스트' not in text and marker in text:
-              text = text.replace(marker, block + marker, 1)
-          index.write_text(text, encoding="utf-8")
-
-          products = Path("products.html")
-          text = products.read_text(encoding="utf-8")
-          marker = '<section class="section blue" id="formats">'
-          block = '''<section class="section white"><div class="container"><div class="head center"><span class="eyebrow">기본형 템플릿</span><h2>먼저 실제 작동 화면을 확인해보세요.</h2><p>생일열차 기본형은 이름과 선택값만 바꾸고 이야기 흐름은 고정해 빠르게 제작하는 구조입니다.</p></div><div style="text-align:center"><a class="btn btn-primary" href="template.html">생일열차 템플릿 체험하기</a></div></div></section>'''
-          if '생일열차 템플릿 체험하기' not in text and marker in text:
-              text = text.replace(marker, block + marker, 1)
-          products.write_text(text, encoding="utf-8")
+          path = Path('template-v1.js')
+          text = path.read_text(encoding='utf-8')
+          replacements = {
+              '토끼가 풍선 속으로': '포롱이 풍선 속으로',
+              '${name}과 토끼는': '${name}과 포롱은',
+              '길을 잃은 아기곰': '길을 잃은 몽글',
+              '아기곰이 훌쩍이고': '몽글이 훌쩍이고',
+              '${name}은 아기곰에게': '${name}은 몽글에게',
+              '조금 무서웠지만 여우가': '조금 무서웠지만 해루가',
+              '토끼와 아기곰, 여우가': '포롱과 몽글, 해루가',
+              '동물 친구들은 풍선을': '포롱과 몽글, 해루는 풍선을'
+          }
+          for old, new in replacements.items():
+              text = text.replace(old, new)
+          path.write_text(text, encoding='utf-8')
           PY
 
-      - name: Commit template site connection
+      - name: Commit builder wording
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html products.html stories.html themes.html guide.html apply.html
-          git commit -m "Connect birthday template to homepage and navigation [site-v31]" || exit 0
+          git add template-v1.js
+          git commit -m "Use distinctive companion names in birthday template [site-v33]" || exit 0
           git push origin main
