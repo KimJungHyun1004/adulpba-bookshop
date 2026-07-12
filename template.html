@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles.css?v=12">
   <link rel="stylesheet" href="image-fixes-v30.css?v=30">
   <link rel="stylesheet" href="template-v1.css?v=1">
-  <link rel="stylesheet" href="template-character-v2.css?v=2">
+  <link rel="stylesheet" href="template-character-v2.css?v=3">
 </head>
 <body class="template-page">
   <div class="notice">🚂 <b>기본형 1호 템플릿 테스트</b> · 결제·사진 업로드 없이 바로 체험</div>
@@ -40,8 +40,8 @@
         <div class="template-cover-teaser" aria-hidden="true">
           <div class="teaser-stars">✦　✧　✦</div>
           <div class="teaser-train">🚂</div>
-          <b>다훈이에게 도착한<br>생일열차</b>
-          <small>별빛 생일역으로 떠나는 반짝이는 여행</small>
+          <b id="teaserTitle">다훈이에게 도착한<br>생일열차</b>
+          <small id="teaserSubtitle">일곱 번째 생일에 떠나는 반짝이는 여행</small>
         </div>
       </div>
     </section>
@@ -50,6 +50,15 @@
       <div class="container">
         <b>현재 버전은 기능 검증용입니다.</b>
         <span>최종 판매용 그림·인쇄 규격·결제 기능은 아직 연결되지 않았습니다. 입력 내용은 서버로 전송되지 않고 현재 브라우저에서만 미리보기에 사용됩니다.</span>
+      </div>
+    </section>
+
+    <section class="builder-roadmap">
+      <div class="container builder-roadmap-grid">
+        <div class="builder-roadmap-item active"><em>01</em><b>책 정보 선택</b><span>이름·생일·테마</span></div>
+        <div class="builder-roadmap-item"><em>02</em><b>캐릭터 조합</b><span>머리·피부톤·옷</span></div>
+        <div class="builder-roadmap-item"><em>03</em><b>문장 자동 반영</b><span>24페이지 전체 확인</span></div>
+        <div class="builder-roadmap-item muted"><em>04</em><b>판매 그림 적용</b><span>다음 제작 단계</span></div>
       </div>
     </section>
 
@@ -91,7 +100,12 @@
               </div>
               <div class="companion-box">
                 <h4>생일열차의 고정 친구들</h4>
-                <p>동물 친구는 기본형의 고정 캐릭터입니다. 토토·루루는 흔한 이름이라 최종 확정 전 별도 후보로 바꿀 예정입니다.</p>
+                <p>토토·루루처럼 흔한 이름 대신, 발음이 쉽고 시리즈에서 기억하기 좋은 가칭으로 먼저 적용했습니다.</p>
+                <div class="companion-mini-grid">
+                  <div class="companion-mini"><i>🐰</i><b>포롱</b><small>접힌 귀와 승차권 목도리<br>웃음빛 친구</small><span>가칭</span></div>
+                  <div class="companion-mini"><i>🐻</i><b>몽글</b><small>구름 배무늬와 비대칭 귀<br>다정빛 친구</small><span>가칭</span></div>
+                  <div class="companion-mini"><i>🦊</i><b>해루</b><small>혜성 꼬리와 별 세 개<br>용기빛 친구</small><span>가칭</span></div>
+                </div>
               </div>
             </div>
 
@@ -114,6 +128,8 @@
             <div class="preview-status"><b id="previewLabel">표지</b><span id="previewCounter">표지 + 내지 24페이지</span></div>
           </div>
 
+          <div class="artwork-pending-note"><b>지금은 기능 뼈대만 확인하는 화면입니다.</b><span>아래 임시 그림은 판매용이 아니며, 구조가 확정되면 같은 화풍의 실제 일러스트로 한꺼번에 교체합니다.</span></div>
+
           <div class="book-viewer" id="bookViewer">
             <button class="book-nav prev" id="prevSpread" type="button" aria-label="이전 장면">‹</button>
             <div class="book-spread" id="bookSpread"></div>
@@ -126,6 +142,7 @@
             <button class="btn btn-primary" type="button" id="toggleAllPages">전체 24페이지 펼쳐보기</button>
             <button class="btn btn-soft" type="button" id="printTemplate">샘플 PDF 저장 테스트</button>
           </div>
+          <div class="selection-summary-card" id="selectionSummary"></div>
           <p class="template-print-note">PDF 버튼을 누르면 브라우저 인쇄 창이 열립니다. 현재는 워터마크가 포함된 기능 테스트본이며, 휴대폰에서는 ‘PDF로 저장’ 지원 여부가 브라우저마다 다를 수 있습니다.</p>
         </section>
       </div>
@@ -140,8 +157,8 @@
 
     <section class="template-next-section">
       <div class="container template-next-box">
-        <div><span class="eyebrow">다음 제작 단계</span><h2>기능이 잡히면 그림을 판매용으로 교체합니다.</h2><p>현재 템플릿은 이름·선택값·24페이지 흐름·PDF 저장 방식이 제대로 작동하는지 확인하는 뼈대입니다. 이후 고정 배경 12장과 캐릭터 포즈를 실제 일러스트로 교체하면 기본형 상품이 됩니다.</p></div>
-        <a class="btn btn-primary" href="guide.html">제작 과정 확인하기</a>
+        <div><span class="eyebrow">다음 제작 단계</span><h2>기능을 먼저 고정하고, 그림은 한꺼번에 교체합니다.</h2><p>현재는 입력값, 캐릭터 선택, 24페이지 문장 반영과 PDF 저장 구조를 확인합니다. 이 기능이 안정되면 표지·배경·포즈 이미지를 같은 화풍으로 묶어 제작해 교체합니다.</p></div>
+        <a class="btn btn-primary" href="#template-maker">선택값 다시 확인</a>
       </div>
     </section>
   </main>
@@ -159,7 +176,7 @@
 
   <div class="print-book" id="printBook" aria-hidden="true"></div>
   <script src="script.js?v=30"></script>
-  <script src="template-v1.js?v=1"></script>
-  <script src="template-character-v2.js?v=2"></script>
+  <script src="template-v1.js?v=3"></script>
+  <script src="template-character-v2.js?v=3"></script>
 </body>
 </html>
